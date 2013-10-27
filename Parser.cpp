@@ -71,8 +71,8 @@ void Parser::_printHelp() {
   std::cout << "FEATURED OPTIONS\n\t--help\n\t\tprint help\n\t--settime XhYmZs\n\t\t";
   std::cout << "set time for the system: h - hours, m - minutes, s - seconds\n\t";
   std::cout << "--scct\n\t\tset command for crontab file. Wherever you need to print space, print '%' instead. Wherever you need to print '>', print '+' instead. ";
-  std::cout << "By default it is /usr/sbin/ntpdate pool.ntp.org\n\t--siim\n\t\tset interval for cron in minutes\n\t--siih\n\t\t";
-  std::cout << "set interval for cron in hours\n\t--roxmyh\n\t\tset an hour and a minute in crontab file\n";
+  std::cout << "By default it is /usr/sbin/ntpdate pool.ntp.org\n\t--interval\n\t\tset interval for cron in minutes(last symbol in parameter 'm') ";
+  std::cout << "or in hours(last symbol in parameter 'h')\n\t--roxmyh\n\t\tset an hour and a minute in crontab file\n";
 }
 
 void Parser::_runCommands() {
@@ -101,13 +101,9 @@ void Parser::_runCommands() {
             flagSetTimeMist = true;
           }
     }
-    if(c == "--siim") {
+    if(c == "--interval") {
       flag = true;
-      _setIntervalInMinutes(p);
-    }
-    if(c == "--siih") {
-      flag = true;
-      _setIntervalInHours(p);
+      _setInterval(p);
     }
     if(c == "--roxmyh") {
       flag = true;
@@ -302,27 +298,37 @@ void Parser::_setCommandCT(int pos) {
   }
 }
 
-void Parser::_setIntervalInHours(int pos) {
+void Parser::_setInterval(int pos) {
   if(pos+1 == _massiveOfPar.size()) {
-    _addMistake("--siih: this command needs an argument");
+    _addMistake("--interval: this command needs an argument");
     return;
   }
   _doneMas[pos+1] = true;
+  std::string lastSymbol = _massiveOfPar[pos+1].substr(_massiveOfPar[pos+1].length()-1,1);
+  if(lastSymbol == "h")
+    _setIntervalInHours(pos);
+  else if(lastSymbol == "m")
+    _setIntervalInMinutes(pos);
+  else
+    _addMistake("--interval: last symbol of argument should be either 'm'(for minutes) or 'h'(for hours)");
+}
+
+void Parser::_setIntervalInHours(int pos) {
   int hours = atoi(_massiveOfPar[pos+1].c_str());
   std::stringstream ss;
   ss << hours;
   std::string newArgHours = ss.str();
   bool flag = false;
-  if(newArgHours.length() != _massiveOfPar[pos+1].length()) {
-    _addMistake("--siih: wrong argument. Argument of --siih should be number of hours");
+  if(newArgHours.length() != _massiveOfPar[pos+1].length()-1) {
+    _addMistake("--interval: wrong argument. Argument of --interval(h) should be number of hours");
     flag = true;
   }
   if(hours > 23 || hours < 0) {
-    _addMistake("--siih: number of hours should be between 0 and 23");
+    _addMistake("--interval: number of hours should be between 0 and 23");
     flag = true;
   }
   if(24%hours) {
-    _addMistake("--siih: number of hours should be a divisor of 24");
+    _addMistake("--interval: number of hours should be a divisor of 24");
     flag = true;
   }
   if(!flag)
@@ -330,26 +336,21 @@ void Parser::_setIntervalInHours(int pos) {
 }
 
 void Parser::_setIntervalInMinutes(int pos) {
-  if(pos+1 == _massiveOfPar.size()) {
-    _addMistake("--siim: this command needs an argument");
-    return;
-  }
-  _doneMas[pos+1] = true;
   int minutes = atoi(_massiveOfPar[pos+1].c_str());
   std::stringstream ss;
   ss << minutes;
   std::string newArgMinutes = ss.str();
   bool flag = false;
-  if(newArgMinutes.length() != _massiveOfPar[pos+1].length()) {
-    _addMistake("--siim: wrong argument. Argument of --siim should be number of minutess");
+  if(newArgMinutes.length() != _massiveOfPar[pos+1].length()-1) {
+    _addMistake("--interval: wrong argument. Argument of --interval(m) should be number of minutes");
     flag = true;
   }
   if(minutes > 59 || minutes < 0) {
-    _addMistake("--siim: number of minutess should be between 0 and 59");
+    _addMistake("--interval: number of minutess should be between 0 and 59");
     flag = true;
   }
   if(60%minutes) {
-    _addMistake("--siim: number of minutess should be a divisor of 60");
+    _addMistake("--interval: number of minutess should be a divisor of 60");
     flag = true;
   }
   if(!flag)

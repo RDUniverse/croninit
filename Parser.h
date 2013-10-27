@@ -33,6 +33,7 @@ class Parser {
     void _printHelp();
     void _addMistake(const std::string&);
     void _addCommand(const std::string&, int);
+    void _setInterval(int);
     void _setIntervalInMinutes(int);
     void _setIntervalInHours(int);
     void _setHourAndMinuteInCrontabFile(int);
