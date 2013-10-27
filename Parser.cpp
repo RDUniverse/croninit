@@ -4,7 +4,6 @@ Parser::Parser(int argc, char* argv[]) {
   _h = -1;
   _m = -1;
   _s = -1;
-  _nom = 0;
   _tasksCount = 0;
   _commandsCount = 0;
   _setTimeMode = false;
@@ -31,7 +30,7 @@ int Parser::init() {
       _addCommand(_mas[i], i);
   _runCommands();
   _checkDoneMas();
-  if(_nom) {
+  if(_mistakes.size()) {
     _printMistakes();
     std::cout << "\n"; 
     _printHelp();
@@ -93,22 +92,7 @@ void Parser::_addTask(int mode, int arg1, int arg2) {
 }
 
 void Parser::_addMistake(const std::string& mist) {
-  if(_nom) {
-    std::string *temp = new std::string[_nom];
-    for(int i = 0; i < _nom; i++)
-      temp[i] = _mistakes[i];
-    delete[] _mistakes;
-    _mistakes = new std::string[_nom+1];
-    for(int i = 0; i < _nom; i++)
-      _mistakes[i] = temp[i];
-    _mistakes[_nom] = mist;
-    delete[] temp;
-    _nom++;
-  } else {
-    _mistakes = new std::string[1];
-    _mistakes[0] = mist;
-    _nom = 1;
-  }
+  _mistakes.push_back(mist);
 }
 
 void Parser::_addCommand(const std::string& comm, int pos) {
@@ -142,7 +126,7 @@ void Parser::_addCommand(const std::string& comm, int pos) {
 }
 
 void Parser::_printMistakes() {
-  for(int i = 0; i < _nom ; i++)
+  for(int i = 0; i < _mistakes.size(); i++)
     std::cout << _mistakes[i] << "\n";
 }
 

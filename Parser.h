@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <vector>
 #include "stdlib.h"
 
 class Parser {
@@ -32,8 +33,7 @@ class Parser {
     int _commandsCount;
     int* _commandsPoss;
     std::string* _commands;
-    int _nom; // number of mistakes
-    std::string* _mistakes;
+    std::vector<std::string> _mistakes;
     void _printMistakes();
     void _printHelp();
     void _addMistake(const std::string&);
