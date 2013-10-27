@@ -22,6 +22,7 @@ class Parser {
     int _h; //number of hours
     int _m; //mumber of minutes
     int _s; //number of seconds
+    bool _setTimeMode;
     std::vector<std::vector<int> > _task;
     std::vector<int> _doneMas;
     std::vector<std::string> _massiveOfPar;
@@ -41,5 +42,4 @@ class Parser {
     void _setTime(int);
     void _setCommandCT(int);
     void _checkDoneMas();
-    bool _setTimeMode;
 };
