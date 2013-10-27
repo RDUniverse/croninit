@@ -31,7 +31,7 @@ int Parser::init() {
     _printHelp();
     return 1;
   }
-  if(!_task.size()) _addTask(2,0,2);
+  if(!_task.size()) _addTask(2,0,2,0,0);
   return 0;
 }
 
@@ -39,18 +39,22 @@ int Parser::getTasksCount() {
   return _task.size();
 }
 
-void Parser::getTask(int numb, int& mode, int& arg1, int& arg2) {
+void Parser::getTask(int numb, int& mode, int& arg1, int& arg2, int& arg3, int& arg4) {
   mode = _task[numb][0];
   arg1 = _task[numb][1];
   arg2 = _task[numb][2];
+  arg3 = _task[numb][3];
+  arg4 = _task[numb][4];
 }
 
-void Parser::_addTask(int mode, int arg1, int arg2) {
+void Parser::_addTask(int mode, int arg1, int arg2, int arg3, int arg4) {
   const std::vector<int> k;
   _task.push_back(k);
   _task[_task.size() - 1].push_back(mode);
   _task[_task.size() - 1].push_back(arg1);
   _task[_task.size() - 1].push_back(arg2);
+  _task[_task.size() - 1].push_back(arg3);
+  _task[_task.size() - 1].push_back(arg4);
 }
 
 void Parser::_addMistake(const std::string& mist) {
@@ -105,9 +109,9 @@ void Parser::_runCommands() {
       flag = true;
       _setInterval(p);
     }
-    if(c == "--roxmyh") {
+    if(c == "--time") {
       flag = true;
-      _setHourAndMinuteInCrontabFile(p);
+      _setTimeInCrontabFile(p);
     }
     if(c == "--scct") { 
       flag = true;
@@ -319,20 +323,21 @@ void Parser::_setIntervalInHours(int pos) {
   ss << hours;
   std::string newArgHours = ss.str();
   bool flag = false;
-  if(newArgHours.length() != _massiveOfPar[pos+1].length()-1) {
+  if(newArgHours.length() != _massiveOfPar[pos+1].length()-1 || (hours == 0 && _massiveOfPar[pos+1]!="0h")) {
     _addMistake("--interval: wrong argument. Argument of --interval(h) should be number of hours");
     flag = true;
   }
-  if(hours > 23 || hours < 0) {
-    _addMistake("--interval: number of hours should be between 0 and 23");
+  if(hours > 12 || hours < 0 || (hours == 0 && _massiveOfPar[pos+1]=="0h")) {
+    _addMistake("--interval: number of hours should be between 1 and 12");
     flag = true;
   }
-  if(24%hours) {
-    _addMistake("--interval: number of hours should be a divisor of 24");
-    flag = true;
-  }
+  if(hours)  
+    if(24%hours) {
+      _addMistake("--interval: number of hours should be a divisor of 24");
+      flag = true;
+    }     
   if(!flag)
-    _addTask(2,0,hours);
+    _addTask(2,0,hours,0,0);
 }
 
 void Parser::_setIntervalInMinutes(int pos) {
@@ -341,77 +346,85 @@ void Parser::_setIntervalInMinutes(int pos) {
   ss << minutes;
   std::string newArgMinutes = ss.str();
   bool flag = false;
-  if(newArgMinutes.length() != _massiveOfPar[pos+1].length()-1) {
+  if(newArgMinutes.length() != _massiveOfPar[pos+1].length()-1 || (minutes == 0 && _massiveOfPar[pos+1]!="0m")) {
     _addMistake("--interval: wrong argument. Argument of --interval(m) should be number of minutes");
     flag = true;
   }
-  if(minutes > 59 || minutes < 0) {
-    _addMistake("--interval: number of minutess should be between 0 and 59");
+  if(minutes > 30 || minutes < 0 || (minutes == 0 && _massiveOfPar[pos+1]=="0m")) {
+    _addMistake("--interval: number of minutess should be between 1 and 30");
     flag = true;
   }
-  if(60%minutes) {
-    _addMistake("--interval: number of minutess should be a divisor of 60");
-    flag = true;
-  }
+  if(minutes)
+    if(60%minutes) {
+      _addMistake("--interval: number of minutess should be a divisor of 60");
+      flag = true;
+    }
   if(!flag)
-    _addTask(1,minutes,0);
+    _addTask(1,minutes,0,0,0);
 }
 
-void Parser::_setHourAndMinuteInCrontabFile(int pos) {
+void Parser::_setTimeInCrontabFile(int pos) {
   if(pos+1 == _massiveOfPar.size()  || pos+2 == _massiveOfPar.size()) {
-    _addMistake("--roxmyh: this command needs two arguments");
+    _addMistake("--time: this command needs two arguments");
     return;
   }
   _doneMas[pos+1] = true;
   _doneMas[pos+2] = true;
-  bool astHflag = false;
-  bool astMflag = false;
-  if(_massiveOfPar[pos+1] == "%")
-    astMflag = true;
-  if(_massiveOfPar[pos+2] == "%")
-    astHflag = true;
-  int minutes = 0;
-  int hours = 0;
-  std::string newArgMinutes = "";
-  std::string newArgHours = "";
-  if(!astMflag) {
-    minutes = atoi(_massiveOfPar[pos+1].c_str());
-    std::stringstream ss1;
-    ss1 << minutes;
-    newArgMinutes = ss1.str();
-  }
-  if(!astHflag) {
-    hours = atoi(_massiveOfPar[pos+2].c_str());
-    std::stringstream ss2;
-    ss2 << hours;
-    newArgHours = ss2.str();
-  }
-  bool flag = false;
-  if(!astMflag && (newArgMinutes.length() != _massiveOfPar[pos+1].length())) {
-    _addMistake("--roxmyh: wrong first argument. First argument of --roxmyh should be number of minutes or %");
+  std::string par1 = _massiveOfPar[pos+1];
+  std::string par2 = _massiveOfPar[pos+2];
+  std::string month;
+  std::string day;
+  std::string hour;
+  std::string minute;
+  int sepCount = 0;
+  int flag = false;
+  int pos1 = 0;
+  int pos2 = 0;
+  for(int i = 0; i < par1.length(); i++)
+    if(par1.substr(i,1) == "/") {
+      sepCount++;
+      pos1 = i;
+    }
+  if(sepCount > 1) {
+    _addMistake("--time: first argument: there should be only one separator '/' in this argument. format : --time MM/DD hh:mm");
     flag = true;
   }
-  if(!astHflag && (newArgHours.length() != _massiveOfPar[pos+2].length())) {
-    _addMistake("--roxmyh: wrong second argument. Second argument of --roxmyh should be number of hours or %");
+  if(sepCount == 0) {
+    _addMistake("--time: first argument: missing separator '/' in this argument. format : --time MM/DD hh:mm");
     flag = true;
   }
-  if(!astMflag && (minutes > 59 || minutes < 0)) {
-    _addMistake("--roxmyh: number of minutess should be between 0 and 59");
+  sepCount = 0;
+  for(int i = 0; i < par2.length(); i++)
+    if(par2.substr(i,1) == ":") {
+      sepCount++;
+      pos2 = i;
+    }
+  if(sepCount > 1) {
+    _addMistake("--time: second argument: there should be only one separator ':' in this argument. format : --time MM/DD hh:mm");
     flag = true;
   }
-  if(!astHflag && (hours > 23 || hours < 0)) {
-    _addMistake("--roxmyh: number of hours should be between 0 and 23");
+  if(sepCount == 0) {
+    _addMistake("--time: second argument: missing separator ':' in this argument. format : --time MM/DD hh:mm");
     flag = true;
   }
-  if(!flag) {
-    if(astMflag && astHflag)
-      _addTask(3,-1,-1);
-    if(!astMflag && astHflag)
-      _addTask(3,minutes,-1);
-    if(astMflag && !astHflag)
-      _addTask(3,-1,hours);
-    if(!astMflag && !astHflag)
-      _addTask(3,minutes,hours);
+  if(flag)
+    return;
+  month = par1.substr(0,pos1);
+  day = par1.substr(pos1+1,par1.length()-pos1-1);
+  hour = par2.substr(0,pos2);
+  minute = par2.substr(pos2+1,par2.length()-pos2-1);
+  int monthI = atoi(month.c_str());
+  std::stringstream ss;
+  ss << monthI;
+  std::string newArgMonth = ss.str();
+  flag = false;
+  if(newArgMonth.length() != month.length()) {
+    _addMistake("--time: wrong argument in place of month");
+    flag = true;
+  }
+  if(monthI > 12 || monthI < 1) {
+    _addMistake("--time: month should be between 1 and 12");
+    flag = true;
   }
 }
 

@@ -19,8 +19,10 @@ void CrontabFileEditor::run(Parser* PAR) {
   int mode = 0;
   int arg1 = 0;
   int arg2 = 0;
+  int arg3 = 0;
+  int arg4 = 0;
   for(int i = 0; i < _tasksCount; i++) {
-    PAR->getTask(i,mode,arg1,arg2);
+    PAR->getTask(i,mode,arg1,arg2,arg3,arg4);
     if(mode == 1) {
       std::stringstream ss;
       ss << arg1;

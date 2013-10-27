@@ -15,7 +15,7 @@ class Parser {
     int getSeconds();
     int init();
     int getTasksCount();
-    void getTask(int, int&, int&, int&);
+    void getTask(int, int&, int&, int&, int&, int&);
     bool getSetTimeMode();
   private:
     std::string _commandCT;
@@ -29,7 +29,7 @@ class Parser {
     std::vector<int> _commandsPoss;
     std::vector<std::string> _commands;
     std::vector<std::string> _mistakes;
-    void _addTask(int, int, int);
+    void _addTask(int, int, int, int, int);
     void _printMistakes();
     void _printHelp();
     void _addMistake(const std::string&);
@@ -37,7 +37,7 @@ class Parser {
     void _setInterval(int);
     void _setIntervalInMinutes(int);
     void _setIntervalInHours(int);
-    void _setHourAndMinuteInCrontabFile(int);
+    void _setTimeInCrontabFile(int);
     void _runCommands();
     void _setTime(int);
     void _setCommandCT(int);
