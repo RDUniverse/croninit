@@ -76,7 +76,8 @@ void Parser::_printHelp() {
   std::cout << "set time for the system: h - hours, m - minutes, s - seconds\n\t";
   std::cout << "--scct\n\t\tset command for crontab file. Wherever you need to print space, print '%' instead. Wherever you need to print '>', print '+' instead. ";
   std::cout << "By default it is /usr/sbin/ntpdate pool.ntp.org\n\t--interval\n\t\tset interval for cron in minutes(last symbol in parameter 'm') ";
-  std::cout << "or in hours(last symbol in parameter 'h')\n\t--roxmyh\n\t\tset an hour and a minute in crontab file\n";
+  std::cout << "or in hours(last symbol in parameter 'h')\n\t--roxmyh\n\t\tset an hour and a minute in crontab file\n\t--time\n\t\t";
+  std::cout << "set time for cron. Format: Month/Day hour:minute, you can use special word 'every' instead of each instance\n";
 }
 
 void Parser::_runCommands() {
@@ -386,11 +387,11 @@ void Parser::_setTimeInCrontabFile(int pos) {
       pos1 = i;
     }
   if(sepCount > 1) {
-    _addMistake("--time: first argument: there should be only one separator '/' in this argument. format : --time MM/DD hh:mm");
+    _addMistake("--time: first argument: there should be only one separator '/' in this argument. format : --time Month/Day hour:minute");
     flag = true;
   }
   if(sepCount == 0) {
-    _addMistake("--time: first argument: missing separator '/' in this argument. format : --time MM/DD hh:mm");
+    _addMistake("--time: first argument: missing separator '/' in this argument. format : --time Month/Day hour:minute");
     flag = true;
   }
   sepCount = 0;
@@ -414,18 +415,65 @@ void Parser::_setTimeInCrontabFile(int pos) {
   hour = par2.substr(0,pos2);
   minute = par2.substr(pos2+1,par2.length()-pos2-1);
   int monthI = atoi(month.c_str());
-  std::stringstream ss;
-  ss << monthI;
-  std::string newArgMonth = ss.str();
+  std::stringstream ss1;
+  ss1 << monthI;
+  std::string newArgMonth = ss1.str();
   flag = false;
-  if(newArgMonth.length() != month.length()) {
+  if((newArgMonth.length() != month.length() || (monthI == 0 && month != "0")) && minute !="every") {
     _addMistake("--time: wrong argument in place of month");
     flag = true;
   }
-  if(monthI > 12 || monthI < 1) {
+  if(monthI > 12 || monthI < 0 || (monthI == 0 && month == "0")) {
     _addMistake("--time: month should be between 1 and 12");
     flag = true;
   }
+  if(month == "every") 
+    monthI = -1;
+  int dayI = atoi(day.c_str());
+  std::stringstream ss2;
+  ss2 << dayI;
+  std::string newArgDay = ss2.str();
+  if((newArgDay.length() != day.length() || (dayI == 0 && day != "0")) && minute !="every") {
+    _addMistake("--time: wrong argument in place of day");
+    flag = true;
+  }
+  if(dayI > 31 || dayI < 0 || (dayI == 0 && day == "0")) {
+    _addMistake("--time: day should be between 1 and 31");
+    flag = true;
+  }
+  if(day == "every") 
+    dayI = -1;
+  int hourI = atoi(hour.c_str());
+  std::stringstream ss3;
+  ss3 << hourI;
+  std::string newArgHour = ss3.str();
+  if((newArgHour.length() != hour.length() || (hourI == 0 && hour != "0")) && hour !="every") {
+    _addMistake("--time: wrong argument in place of hour");
+    flag = true;
+  }
+  if(hourI > 23 || hourI < 0) {
+    _addMistake("--time: hour should be between 0 and 23");
+    flag = true;
+  }
+  if(hour == "every") 
+    hourI = -1;
+  int minuteI = atoi(minute.c_str());
+  std::stringstream ss4;
+  ss4 << minuteI;
+  std::string newArgMinute = ss4.str();
+  if((newArgMinute.length() != minute.length() || (minuteI == 0 && minute != "0")) && minute !="every") {
+    _addMistake("--time: wrong argument in place of minute");
+    flag = true;
+  }
+  if(minuteI > 59 || minuteI < 0) {
+    _addMistake("--time: minute should be between 0 and 59");
+    flag = true;
+  }
+  if(minute == "every") 
+    minuteI = -1;
+  if(flag)
+    return;
+  _addTask(3,minuteI,hourI,dayI,monthI);
 }
 
 int Parser::getMinutes() {

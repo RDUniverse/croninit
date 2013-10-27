@@ -46,20 +46,36 @@ void CrontabFileEditor::run(Parser* PAR) {
     if(mode == 3) {
       std::stringstream ss1;
       ss1 << arg1;
-      std::string minutes = ss1.str();
+      std::string minute = ss1.str();
       std::stringstream ss2;
       ss2 << arg2;
-      std::string hours = ss2.str();
+      std::string hour = ss2.str();
+      std::stringstream ss3;
+      ss3 << arg3;
+      std::string day = ss3.str();
+      std::stringstream ss4;
+      ss4 << arg4;
+      std::string month = ss4.str();
       if(arg1 != -1)
-        result += minutes;
+        result += minute;
       else
         result += "*";
       result += " ";
       if(arg2 != -1)
-        result += hours;
+        result += hour;
       else
         result += "*";
-      result += " * * * ";
+      result+=" ";
+      if(arg3 != -1)
+        result += day;
+      else
+        result += "*";
+      result+=" ";
+      if(arg4 != -1)
+        result += month;
+      else
+        result += "*";
+      result += " * ";
       result += _commandCT;
       result += "\n";
     }
