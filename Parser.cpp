@@ -5,7 +5,6 @@ Parser::Parser(int argc, char* argv[]) {
   _m = -1;
   _s = -1;
   _tasksCount = 0;
-  _commandsCount = 0;
   _setTimeMode = false;
   _commandCT = "/usr/bin/ntpdate pool.ntp.org";
   _nol = argc-1;
@@ -96,33 +95,8 @@ void Parser::_addMistake(const std::string& mist) {
 }
 
 void Parser::_addCommand(const std::string& comm, int pos) {
-  if(_commandsCount) {
-    std::string *temp = new std::string[_commandsCount];
-    for(int i = 0; i < _commandsCount; i++)
-      temp[i] = _commands[i];
-    delete[] _commands;
-    _commands = new std::string[_commandsCount+1];
-    for(int i = 0; i < _commandsCount; i++)
-      _commands[i] = temp[i];
-    _commands[_commandsCount] = comm;
-    delete[] temp;
-    int* tempI = new int[_commandsCount];
-    for(int i = 0; i < _commandsCount; i++)
-      tempI[i] = _commandsPoss[i];
-    delete[] _commandsPoss;
-    _commandsPoss = new int[_commandsCount+1];
-    for(int i = 0; i < _commandsCount; i++)
-      _commandsPoss[i] = tempI[i];
-    _commandsPoss[_commandsCount] = pos;
-    delete[] tempI;
-    _commandsCount++;
-  } else {
-    _commands = new std::string[1];
-    _commands[0] = comm;
-    _commandsPoss = new int[1];
-    _commandsPoss[0] = pos;
-    _commandsCount = 1;
-  }
+  _commands.push_back(comm);
+  _commandsPoss.push_back(pos);
 }
 
 void Parser::_printMistakes() {
@@ -143,7 +117,7 @@ void Parser::_runCommands() {
   bool flagSetTimeMist = false;
   bool flagscct = false;
   bool flagscctMist = false;
-  for(int i = 0; i < _commandsCount; i++) {
+  for(int i = 0; i < _commands.size(); i++) {
     std::string c = _commands[i];
     int p = _commandsPoss[i];
     _doneMas[p] = true;

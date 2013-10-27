@@ -30,9 +30,8 @@ class Parser {
     bool* _doneMas;
     int _nol;
     std::string* _mas;
-    int _commandsCount;
-    int* _commandsPoss;
-    std::string* _commands;
+    std::vector<int> _commandsPoss;
+    std::vector<std::string> _commands;
     std::vector<std::string> _mistakes;
     void _printMistakes();
     void _printHelp();
