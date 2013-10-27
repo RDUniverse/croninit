@@ -18,11 +18,11 @@ int main(int argc, char* argv[]) {
     return 0;
   }
   //end of user identification process
-  //start of parsing input data
+  //start of parsing
   Parser parser(argc, argv);
   if(parser.init()) 
     return 0;
-  //end of parsing input data
+  //end of parsing
   //start of creating crontab file
   CrontabFileEditor editor;
   editor.init(&parser);
