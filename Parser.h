@@ -22,16 +22,13 @@ class Parser {
     int _h; //number of hours
     int _m; //mumber of minutes
     int _s; //number of seconds
-    int* _modeOut;
-    int* _arg1Out;
-    int* _arg2Out;
-    int _tasksCount;
-    void _addTask(int, int, int);
+    std::vector<std::vector<int> > _task;
     std::vector<int> _doneMas;
     std::vector<std::string> _massiveOfPar;
     std::vector<int> _commandsPoss;
     std::vector<std::string> _commands;
     std::vector<std::string> _mistakes;
+    void _addTask(int, int, int);
     void _printMistakes();
     void _printHelp();
     void _addMistake(const std::string&);

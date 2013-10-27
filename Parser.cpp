@@ -4,7 +4,6 @@ Parser::Parser(int argc, char* argv[]) {
   _h = -1;
   _m = -1;
   _s = -1;
-  _tasksCount = 0;
   _setTimeMode = false;
   _commandCT = "/usr/bin/ntpdate pool.ntp.org";
   for(int i = 0; i < argc-1; i++)
@@ -32,59 +31,26 @@ int Parser::init() {
     _printHelp();
     return 1;
   }
-  if(!_tasksCount) _addTask(2,0,2);
+  if(!_task.size()) _addTask(2,0,2);
   return 0;
 }
 
 int Parser::getTasksCount() {
-  return _tasksCount;
+  return _task.size();
 }
 
 void Parser::getTask(int numb, int& mode, int& arg1, int& arg2) {
-  mode = _modeOut[numb];
-  arg1 = _arg1Out[numb];
-  arg2 = _arg2Out[numb];
+  mode = _task[numb][0];
+  arg1 = _task[numb][1];
+  arg2 = _task[numb][2];
 }
 
 void Parser::_addTask(int mode, int arg1, int arg2) {
-  if(_tasksCount) {
-    int *temp1 = new int[_tasksCount];
-    int *temp2 = new int[_tasksCount];
-    int *temp3 = new int[_tasksCount];
-    for(int i = 0; i < _tasksCount; i++)
-      temp1[i] = _modeOut[i];
-    for(int i = 0; i < _tasksCount; i++)
-      temp2[i] = _arg1Out[i];
-    for(int i = 0; i < _tasksCount; i++)
-      temp3[i] = _arg2Out[i];
-    delete[] _modeOut;
-    delete[] _arg1Out;
-    delete[] _arg2Out;
-    _modeOut = new int[_tasksCount+1];
-    _arg1Out = new int[_tasksCount+1];
-    _arg2Out = new int[_tasksCount+1];
-    for(int i = 0; i < _tasksCount; i++)
-      _modeOut[i] = temp1[i];
-    for(int i = 0; i < _tasksCount; i++)
-      _arg1Out[i] = temp2[i];
-    for(int i = 0; i < _tasksCount; i++)
-      _arg2Out[i] = temp3[i];
-    _modeOut[_tasksCount] = mode;
-    _arg1Out[_tasksCount] = arg1;
-    _arg2Out[_tasksCount] = arg2;
-    delete[] temp1;
-    delete[] temp2;
-    delete[] temp3;
-    _tasksCount++;
-  } else {
-    _modeOut = new int[1];
-    _modeOut[0] = mode;
-    _arg1Out = new int[1];
-    _arg1Out[0] = arg1;
-    _arg2Out = new int[1];
-    _arg2Out[0] = arg2;
-    _tasksCount = 1;
-  }
+  const std::vector<int> k;
+  _task.push_back(k);
+  _task[_task.size() - 1].push_back(mode);
+  _task[_task.size() - 1].push_back(arg1);
+  _task[_task.size() - 1].push_back(arg2);
 }
 
 void Parser::_addMistake(const std::string& mist) {
