@@ -28,8 +28,7 @@ class Parser {
     int _tasksCount;
     void _addTask(int, int, int);
     bool* _doneMas;
-    int _nol;
-    std::string* _mas;
+    std::vector<std::string> _massiveOfPar;
     std::vector<int> _commandsPoss;
     std::vector<std::string> _commands;
     std::vector<std::string> _mistakes;

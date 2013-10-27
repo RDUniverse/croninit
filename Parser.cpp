@@ -7,26 +7,24 @@ Parser::Parser(int argc, char* argv[]) {
   _tasksCount = 0;
   _setTimeMode = false;
   _commandCT = "/usr/bin/ntpdate pool.ntp.org";
-  _nol = argc-1;
-  _doneMas = new bool[_nol];
-  for(int i = 0; i<_nol; i++)
+  _doneMas = new bool[argc-1];
+  for(int i = 0; i<argc-1; i++)
     _doneMas[i] = false;
-  _mas = new std::string[_nol];
   for(int i = 1; i < argc; i++)
-    _mas[i-1] = std::string(argv[i]); 
+    _massiveOfPar.push_back(argv[i]); 
 }
 
 std::string Parser::mgetpar(int n) {
-  if(n < _nol && n > -1)
-    return _mas[n];
+  if(n < _massiveOfPar.size() && n > -1)
+    return _massiveOfPar[n];
   else 
     return "Error";
 }
 
 int Parser::init() {
-  for(int i = 0; i < _nol; i++)
-    if(_mas[i].substr(0,2) == "--")
-      _addCommand(_mas[i], i);
+  for(int i = 0; i < _massiveOfPar.size(); i++)
+    if(_massiveOfPar[i].substr(0,2) == "--")
+      _addCommand(_massiveOfPar[i], i);
   _runCommands();
   _checkDoneMas();
   if(_mistakes.size()) {
@@ -169,13 +167,13 @@ void Parser::_runCommands() {
 }
 
 void Parser::_setTime(int pos) {
-  if(pos+1 == _nol) {
+  if(pos+1 == _massiveOfPar.size()) {
     _addMistake("--settime: this command needs an argument");
     return;
   }
   _setTimeMode = true; 
   _doneMas[pos+1] = true;
-  std::string arg = _mas[pos+1];
+  std::string arg = _massiveOfPar[pos+1];
   int ph = -1;
   int pm = -1;
   int ps = -1;
@@ -321,11 +319,11 @@ std::string Parser::getCommandCT() {
 }
 
 void Parser::_setCommandCT(int pos) {
-  if(pos+1 == _nol) {
+  if(pos+1 == _massiveOfPar.size()) {
     _addMistake("--scct: this command needs an argument");
     return;
   }
-  _commandCT = _mas[pos+1];
+  _commandCT = _massiveOfPar[pos+1];
   _doneMas[pos+1] = true;
   for(int i = 0; i < _commandCT.length(); i++) {
     if(_commandCT.substr(i,1) == "%") {
@@ -340,17 +338,17 @@ void Parser::_setCommandCT(int pos) {
 }
 
 void Parser::_setIntervalInHours(int pos) {
-  if(pos+1 == _nol) {
+  if(pos+1 == _massiveOfPar.size()) {
     _addMistake("--siih: this command needs an argument");
     return;
   }
   _doneMas[pos+1] = true;
-  int hours = atoi(_mas[pos+1].c_str());
+  int hours = atoi(_massiveOfPar[pos+1].c_str());
   std::stringstream ss;
   ss << hours;
   std::string newArgHours = ss.str();
   bool flag = false;
-  if(newArgHours.length() != _mas[pos+1].length()) {
+  if(newArgHours.length() != _massiveOfPar[pos+1].length()) {
     _addMistake("--siih: wrong argument. Argument of --siih should be number of hours");
     flag = true;
   }
@@ -367,17 +365,17 @@ void Parser::_setIntervalInHours(int pos) {
 }
 
 void Parser::_setIntervalInMinutes(int pos) {
-  if(pos+1 == _nol) {
+  if(pos+1 == _massiveOfPar.size()) {
     _addMistake("--siim: this command needs an argument");
     return;
   }
   _doneMas[pos+1] = true;
-  int minutes = atoi(_mas[pos+1].c_str());
+  int minutes = atoi(_massiveOfPar[pos+1].c_str());
   std::stringstream ss;
   ss << minutes;
   std::string newArgMinutes = ss.str();
   bool flag = false;
-  if(newArgMinutes.length() != _mas[pos+1].length()) {
+  if(newArgMinutes.length() != _massiveOfPar[pos+1].length()) {
     _addMistake("--siim: wrong argument. Argument of --siim should be number of minutess");
     flag = true;
   }
@@ -394,7 +392,7 @@ void Parser::_setIntervalInMinutes(int pos) {
 }
 
 void Parser::_setHourAndMinuteInCrontabFile(int pos) {
-  if(pos+1 == _nol  || pos+2 == _nol) {
+  if(pos+1 == _massiveOfPar.size()  || pos+2 == _massiveOfPar.size()) {
     _addMistake("--roxmyh: this command needs two arguments");
     return;
   }
@@ -402,32 +400,32 @@ void Parser::_setHourAndMinuteInCrontabFile(int pos) {
   _doneMas[pos+2] = true;
   bool astHflag = false;
   bool astMflag = false;
-  if(_mas[pos+1] == "%")
+  if(_massiveOfPar[pos+1] == "%")
     astMflag = true;
-  if(_mas[pos+2] == "%")
+  if(_massiveOfPar[pos+2] == "%")
     astHflag = true;
   int minutes = 0;
   int hours = 0;
   std::string newArgMinutes = "";
   std::string newArgHours = "";
   if(!astMflag) {
-    minutes = atoi(_mas[pos+1].c_str());
+    minutes = atoi(_massiveOfPar[pos+1].c_str());
     std::stringstream ss1;
     ss1 << minutes;
     newArgMinutes = ss1.str();
   }
   if(!astHflag) {
-    hours = atoi(_mas[pos+2].c_str());
+    hours = atoi(_massiveOfPar[pos+2].c_str());
     std::stringstream ss2;
     ss2 << hours;
     newArgHours = ss2.str();
   }
   bool flag = false;
-  if(!astMflag && (newArgMinutes.length() != _mas[pos+1].length())) {
+  if(!astMflag && (newArgMinutes.length() != _massiveOfPar[pos+1].length())) {
     _addMistake("--roxmyh: wrong first argument. First argument of --roxmyh should be number of minutes or %");
     flag = true;
   }
-  if(!astHflag && (newArgHours.length() != _mas[pos+2].length())) {
+  if(!astHflag && (newArgHours.length() != _massiveOfPar[pos+2].length())) {
     _addMistake("--roxmyh: wrong second argument. Second argument of --roxmyh should be number of hours or %");
     flag = true;
   }
@@ -464,10 +462,10 @@ int Parser::getSeconds() {
 }
 
 void Parser::_checkDoneMas() {
-  for(int i = 0; i < _nol; i++)
+  for(int i = 0; i < _massiveOfPar.size(); i++)
     if(!_doneMas[i]) {
       std::string str1 = "Unknown argument: ";
-      std::string str = str1 + _mas[i];
+      std::string str = str1 + _massiveOfPar[i];
       _addMistake(str);
     }
 }
