@@ -7,9 +7,8 @@ Parser::Parser(int argc, char* argv[]) {
   _tasksCount = 0;
   _setTimeMode = false;
   _commandCT = "/usr/bin/ntpdate pool.ntp.org";
-  _doneMas = new bool[argc-1];
-  for(int i = 0; i<argc-1; i++)
-    _doneMas[i] = false;
+  for(int i = 0; i < argc-1; i++)
+    _doneMas.push_back(false);
   for(int i = 1; i < argc; i++)
     _massiveOfPar.push_back(argv[i]); 
 }
