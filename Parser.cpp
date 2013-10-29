@@ -72,12 +72,11 @@ void Parser::_printMistakes() {
 }
 
 void Parser::_printHelp() {
-  std::cout << "FEATURED OPTIONS\n\t--help\n\t\tprint help\n\t--settime XhYmZs\n\t\t";
-  std::cout << "set time for the system: h - hours, m - minutes, s - seconds\n\t";
-  std::cout << "--scct\n\t\tset command for crontab file. Wherever you need to print space, print '%' instead. Wherever you need to print '>', print '+' instead. ";
-  std::cout << "By default it is /usr/sbin/ntpdate pool.ntp.org\n\t--interval\n\t\tset interval for cron in minutes(last symbol in parameter 'm') ";
-  std::cout << "or in hours(last symbol in parameter 'h')\n\t--roxmyh\n\t\tset an hour and a minute in crontab file\n\t--time\n\t\t";
-  std::cout << "set time for cron. Format: Month/Day hour:minute, you can use special word 'every' instead of each instance\n";
+  std::cout << "FEATURED OPTIONS\n\t--help\n\t\tprint help\n\t";
+  std::cout << "--interval\n\t\tset time interval in which system data and time will be updated: in minutes(last symbol in parameter 'm') ";
+  std::cout << "or in hours(last symbol in parameter 'h')\n\t--time\n\t\t";
+  std::cout << "set data and time on which system data and time will be updated. Format:";
+  std::cout << "Month/Day hour:minute, you can use special word 'every' instead of each instance\n";
 }
 
 void Parser::_runCommands() {
@@ -331,12 +330,7 @@ void Parser::_setIntervalInHours(int pos) {
   if(hours > 12 || hours < 0 || (hours == 0 && _massiveOfPar[pos+1]=="0h")) {
     _addMistake("--interval: number of hours should be between 1 and 12");
     flag = true;
-  }
-  if(hours)  
-    if(24%hours) {
-      _addMistake("--interval: number of hours should be a divisor of 24");
-      flag = true;
-    }     
+  }    
   if(!flag)
     _addTask(2,0,hours,0,0);
 }
@@ -355,11 +349,6 @@ void Parser::_setIntervalInMinutes(int pos) {
     _addMistake("--interval: number of minutess should be between 1 and 30");
     flag = true;
   }
-  if(minutes)
-    if(60%minutes) {
-      _addMistake("--interval: number of minutess should be a divisor of 60");
-      flag = true;
-    }
   if(!flag)
     _addTask(1,minutes,0,0,0);
 }
