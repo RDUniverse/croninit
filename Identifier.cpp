@@ -5,6 +5,7 @@ int Identifier::_getUsernameSys() {
   const int bufS = 255;
   char buf[bufS];
   mStream = popen("whoami", "r");
+  if(mStream == 0) return 1;
   while(!fgets(buf, bufS, mStream));
   std::string rslt = std::string(buf);
   int l = rslt.length();

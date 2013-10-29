@@ -3,33 +3,23 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
-#include "stdlib.h"
+#include <stdlib.h>
+#include "Arguments.h"
 
 class Parser {
   public:
     Parser(int, char**);
-    std::string mgetpar(int);
-    std::string getCommandCT();
-    int getHours();
-    int getMinutes();
-    int getSeconds();
     int init();
     int getTasksCount();
-    void getTask(int, int&, int&, int&, int&, int&);
-    bool getSetTimeMode();
+    void getTask(int, Arguments&);
   private:
-    std::string _commandCT;
-    int _h; //number of hours
-    int _m; //mumber of minutes
-    int _s; //number of seconds
-    bool _setTimeMode;
     std::vector<std::vector<int> > _task;
-    std::vector<int> _doneMas;
-    std::vector<std::string> _massiveOfPar;
-    std::vector<int> _commandsPoss;
+    std::vector<int> _isParameterChecked;
+    std::vector<std::string> _parameters;
+    std::vector<int> _commandsPositions;
     std::vector<std::string> _commands;
     std::vector<std::string> _mistakes;
-    void _addTask(int, int, int, int, int);
+    void _addTask(Arguments);
     void _printMistakes();
     void _printHelp();
     void _addMistake(const std::string&);
@@ -39,7 +29,5 @@ class Parser {
     void _setIntervalInHours(int);
     void _setTimeInCrontabFile(int);
     void _runCommands();
-    void _setTime(int);
-    void _setCommandCT(int);
-    void _checkDoneMas();
+    void _checkIfAllParametersAreChecked();
 };
