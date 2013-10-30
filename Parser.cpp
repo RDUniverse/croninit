@@ -20,7 +20,7 @@ int Parser::init() {
     return 1;
   }
   if(!_task.size()) {
-    Arguments args = {2,0,2,0,0}; 
+    Arguments args(INTERVALHOURS,0,2,0,0); 
     _addTask(args);
   }
   return 0;
@@ -33,7 +33,17 @@ int Parser::getTasksCount() {
 void Parser::getTask(int numb, Arguments& args) {
   if(_task.size() < numb+1)
     return;
-  args.mode = _task[numb][0];
+  switch(_task[numb][0]) {
+    case 1:
+      args.mode = INTERVALMINUTES;
+      break;
+    case 2:
+      args.mode = INTERVALHOURS;
+      break;
+    case 3:
+      args.mode = SETTIME;
+      break;
+  }
   args.arg1 = _task[numb][1];
   args.arg2 = _task[numb][2];
   args.arg3 = _task[numb][3];
@@ -127,7 +137,7 @@ void Parser::_setIntervalInHours(int pos) {
     flag = true;
   }    
   if(!flag) {
-    Arguments args = {2,0,hours,0,0};
+    Arguments args(INTERVALHOURS,0,hours,0,0);
     _addTask(args);
   }
 }
@@ -147,7 +157,7 @@ void Parser::_setIntervalInMinutes(int pos) {
     flag = true;
   }
   if(!flag) {
-    Arguments args = {1,minutes,0,0,0};
+    Arguments args(INTERVALMINUTES,minutes,0,0,0);
     _addTask(args);
   }
 }
@@ -261,7 +271,7 @@ void Parser::_setTimeInCrontabFile(int pos) {
     minuteI = -1;
   if(flag)
     return;
-  Arguments args = {3,minuteI,hourI,dayI,monthI};
+  Arguments args(SETTIME, monthI, dayI, hourI, minuteI);
   _addTask(args);
 }
 
