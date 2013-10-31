@@ -11,11 +11,11 @@ void CrontabFileEditor::run(Parser* parser) {
   fstrm.open("ctf");
   std::string result = "";
   std::string commandCT = "/usr/bin/ntpdate pool.ntp.org";
-  Arguments args(SETTIME,0,0,0,0);
+  Arguments args(FORMATTED_TIME,0,0,0,0);
   for(int i = 0; i < _tasksCount; i++) {
     parser->getTask(i,args);
     switch(args.mode) {
-      case INTERVALMINUTES: {
+      case INTERVAL_MINUTES: {
         std::stringstream ss;
         ss << args.arg1;
         std::string minutes = ss.str();
@@ -26,7 +26,7 @@ void CrontabFileEditor::run(Parser* parser) {
         result += "\n";
         break;
       }
-      case INTERVALHOURS: {
+      case INTERVAL_HOURS: {
         std::stringstream ss;
         ss << args.arg2;
         std::string hours = ss.str();
@@ -37,7 +37,7 @@ void CrontabFileEditor::run(Parser* parser) {
         result += "\n";
         break;
       }
-      case SETTIME: {
+      case FORMATTED_TIME: {
         std::stringstream ss1;
         if(args.arg1 < -1) {
           ss1 << "*/";

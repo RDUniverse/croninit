@@ -1,16 +1,16 @@
 #pragma once
 
-enum modes {
-  INTERVALMINUTES = 1,
-  INTERVALHOURS = 2,
-  SETTIME = 3
+enum TimeModes {
+  INTERVAL_MINUTES = 1,
+  INTERVAL_HOURS = 2,
+  FORMATTED_TIME = 3
 };
 
 struct Arguments {
-  modes mode;
+  TimeModes mode;
   int arg1;
   int arg2;
   int arg3;
   int arg4;
-  Arguments(modes,int,int,int,int);
+  Arguments(TimeModes,int,int,int,int);
 };
