@@ -39,15 +39,31 @@ void CrontabFileEditor::run(Parser* parser) {
       }
       case SETTIME: {
         std::stringstream ss1;
+        if(args.arg1 < -1) {
+          ss1 << "*/";
+          args.arg1+=100;
+        }
         ss1 << args.arg1;
         std::string minute = ss1.str();
         std::stringstream ss2;
+        if(args.arg2 < -1) {
+          ss2 << "*/";
+          args.arg2+=100;
+        }
         ss2 << args.arg2;
         std::string hour = ss2.str();
         std::stringstream ss3;
+        if(args.arg3 < -1) {
+          ss3 << "*/";
+          args.arg3+=100;
+        }
         ss3 << args.arg3;
         std::string day = ss3.str();
         std::stringstream ss4;
+        if(args.arg4 < -1) {
+          ss4 << "*/";
+          args.arg4+=100;
+        }
         ss4 << args.arg4;
         std::string month = ss4.str();
         if(args.arg1 != -1)

@@ -79,7 +79,7 @@ void Parser::_printHelp() {
   std::cout << "--interval\n\t\tset time interval in which system data and time will be updated: in minutes(last symbol in parameter 'm') ";
   std::cout << "or in hours(last symbol in parameter 'h')\n\t--time\n\t\t";
   std::cout << "set data and time on which system data and time will be updated. Format:";
-  std::cout << "Month/Day hour:minute, you can use special word 'every' instead of each instance\n";
+  std::cout << "Month/Day hour:minute, you can use 'every' or 'every{'interval'}' instead of each instance\n";
 }
 
 void Parser::_runCommands() {
@@ -212,66 +212,102 @@ void Parser::_setTimeInCrontabFile(int pos) {
   day = par1.substr(pos1+1,par1.length()-pos1-1);
   hour = par2.substr(0,pos2);
   minute = par2.substr(pos2+1,par2.length()-pos2-1);
+  int flagMonthEvery = 0;
+  int flagDayEvery = 0;
+  int flagHourEvery = 0;
+  int flagMinuteEvery = 0;
+  if(month.substr(0,6) == "every{" && month != "every" && month.substr(month.length()-1,1) == "}") {
+    flagMonthEvery = 1;
+    month = month.substr(6, month.length() - 7);
+  }
+  if(day.substr(0,6) == "every{" && day != "every" && day.substr(day.length()-1,1) == "}") {
+    flagDayEvery = 1;
+    day = day.substr(6, day.length() - 7);
+  }
+  if(hour.substr(0,6) == "every{" && hour != "every" && hour.substr(hour.length()-1,1) == "}") {
+    flagHourEvery = 1;
+    hour = hour.substr(6, hour.length() - 7);
+  }
+  if(minute.substr(0,6) == "every{" && minute != "every" && minute.substr(minute.length()-1,1) == "}") {
+    flagMinuteEvery = 1;
+    minute = minute.substr(6, minute.length() - 7);
+  }
   int monthI = atoi(month.c_str());
   std::stringstream ss1;
   ss1 << monthI;
   std::string newArgMonth = ss1.str();
   flag = false;
-  if((newArgMonth.length() != month.length() || (monthI == 0 && month != "0")) && minute !="every") {
-    _addMistake("--time: wrong argument in place of month");
+  if((newArgMonth.length() != month.length() || (monthI == 0 && month != "0")) && month !="every") {
+    _addMistake("--time: wrong argument in place of month or interval of months");
     flag = true;
   }
   if(monthI > 12 || monthI < 0 || (monthI == 0 && month == "0")) {
-    _addMistake("--time: month should be between 1 and 12");
+    _addMistake("--time: month or interval of months should be between 1 and 12");
     flag = true;
   }
   if(month == "every") 
     monthI = -1;
+  if(flagMonthEvery)
+    monthI -= 100;
   int dayI = atoi(day.c_str());
   std::stringstream ss2;
   ss2 << dayI;
   std::string newArgDay = ss2.str();
-  if((newArgDay.length() != day.length() || (dayI == 0 && day != "0")) && minute !="every") {
-    _addMistake("--time: wrong argument in place of day");
+  if((newArgDay.length() != day.length() || (dayI == 0 && day != "0")) && day !="every") {
+    _addMistake("--time: wrong argument in place of day or interval of days");
     flag = true;
   }
   if(dayI > 31 || dayI < 0 || (dayI == 0 && day == "0")) {
-    _addMistake("--time: day should be between 1 and 31");
+    _addMistake("--time: day or interval of days should be between 1 and 31");
     flag = true;
   }
   if(day == "every") 
     dayI = -1;
+  if(flagDayEvery)
+    dayI -= 100;
   int hourI = atoi(hour.c_str());
   std::stringstream ss3;
   ss3 << hourI;
   std::string newArgHour = ss3.str();
   if((newArgHour.length() != hour.length() || (hourI == 0 && hour != "0")) && hour !="every") {
-    _addMistake("--time: wrong argument in place of hour");
+    _addMistake("--time: wrong argument in place of hour or interval of hours");
     flag = true;
   }
   if(hourI > 23 || hourI < 0) {
-    _addMistake("--time: hour should be between 0 and 23");
+    _addMistake("--time: hour or interval of hours should be between 0 and 23");
     flag = true;
   }
   if(hour == "every") 
     hourI = -1;
+  if(flagHourEvery && !hourI) {
+    _addMistake("--time: interval of hours shouldn't be 0");
+    flag = true;
+  }
+  if(flagHourEvery)
+    hourI -= 100;
   int minuteI = atoi(minute.c_str());
   std::stringstream ss4;
   ss4 << minuteI;
   std::string newArgMinute = ss4.str();
   if((newArgMinute.length() != minute.length() || (minuteI == 0 && minute != "0")) && minute !="every") {
-    _addMistake("--time: wrong argument in place of minute");
+    _addMistake("--time: wrong argument in place of minute or interval of minutes");
     flag = true;
   }
   if(minuteI > 59 || minuteI < 0) {
-    _addMistake("--time: minute should be between 0 and 59");
+    _addMistake("--time: minute or interval of minutes should be between 0 and 59");
     flag = true;
   }
   if(minute == "every") 
     minuteI = -1;
+  if(flagMinuteEvery && !minuteI) {
+    _addMistake("--time: interval of minutes shouldn't be 0");
+    flag = true;
+  }
+  if(flagMinuteEvery)
+    minuteI -= 100;
   if(flag)
     return;
-  Arguments args(SETTIME, monthI, dayI, hourI, minuteI);
+  Arguments args(SETTIME, minuteI, hourI, dayI, monthI);
   _addTask(args);
 }
 
