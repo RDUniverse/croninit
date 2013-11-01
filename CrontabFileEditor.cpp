@@ -2,6 +2,7 @@
 
 void CrontabFileEditor::init(Parser* parser) {
   _tasksCount = parser->getTasksCount();
+  _serverList = "pool.ntp.org";
 }
 
 void CrontabFileEditor::run(Parser* parser) {
@@ -10,7 +11,7 @@ void CrontabFileEditor::run(Parser* parser) {
   std::ofstream fstrm;
   fstrm.open("ctf");
   std::string result = "";
-  std::string commandCT = "/usr/bin/ntpdate pool.ntp.org";
+  std::string commandCT = "/usr/bin/ntpdate ";
   ModeAndValue mav = {1,0};
   Arguments args(mav,mav,mav,mav);
   for(int i = 0; i < _tasksCount; i++) {
@@ -56,6 +57,8 @@ void CrontabFileEditor::run(Parser* parser) {
       result += "*";
     result += " * ";
     result += commandCT;
+    parser->getServerList(_serverList);
+    result += _serverList;
     result += "\n";
   }
   fstrm << result;

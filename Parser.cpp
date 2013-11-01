@@ -1,6 +1,7 @@
 #include "Parser.h"
 
 Parser::Parser(int argc, char* argv[]) {
+  _serverIsChangedFlag = 0;
   for(int i = 0; i < argc-1; i++)
     _isParameterChecked.push_back(false);
   for(int i = 1; i < argc; i++)
@@ -66,6 +67,7 @@ void Parser::_printMistakes() {
 
 void Parser::_printHelp() {
   std::cout << "FEATURED OPTIONS\n\t--help\n\t\tprint help\n\t";
+  std::cout << "--server\n\t\tset an ntp server for time updating\n\t";
   std::cout << "--time\n\t\t";
   std::cout << "set data and time for the updating data and time on the machine\n\t\tFormat:\n\t\t\t";
   std::cout << "Month/Day hour:minute, where:\n\t\t\t\t";
@@ -92,6 +94,10 @@ void Parser::_runCommands() {
     if(c == "--time") {
       flag = true;
       _setTimeInCrontabFile(p);
+    }
+    if(c == "--server") {
+      flag = true;
+      _addServer(p);
     }
     if(!flag) {
       std::string m = "Unexpected command: ";
@@ -260,4 +266,22 @@ void Parser::_checkIfAllParametersAreChecked() {
       std::string str = str1 + _parameters[i];
       _addMistake(str);
     }
+}
+
+void Parser::_addServer(int pos) {
+  if(pos+1 == _parameters.size()) {
+    _addMistake("--server: this command needs a parameter");
+    return;
+  }
+  _isParameterChecked[pos+1] = true;
+  if(_serverIsChangedFlag) 
+    _serverList << " ";
+  else
+    _serverIsChangedFlag = 1;
+  _serverList << _parameters[pos+1];
+}
+
+void Parser::getServerList(std::string& sl) {
+  if(_serverIsChangedFlag)
+    sl = _serverList.str();
 }

@@ -12,6 +12,7 @@ class Parser {
     int init();
     int getTasksCount();
     void getTask(int, Arguments&);
+    void getServerList(std::string&);
   private:
     std::vector<std::vector<ModeAndValue> > _task;
     std::vector<int> _isParameterChecked;
@@ -19,7 +20,10 @@ class Parser {
     std::vector<int> _commandsPositions;
     std::vector<std::string> _commands;
     std::vector<std::string> _mistakes;
+    std::stringstream _serverList;
+    int _serverIsChangedFlag;
     void _addTask(Arguments);
+    void _addServer(int);
     void _printMistakes();
     void _printHelp();
     void _addMistake(const std::string&);

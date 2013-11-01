@@ -10,4 +10,5 @@ class CrontabFileEditor{
     void run(Parser*);
   private:
     int _tasksCount;
+    std::string _serverList;
 };
