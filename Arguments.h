@@ -1,16 +1,12 @@
 #pragma once
-
-enum TimeModes {
-  INTERVAL_MINUTES = 1,
-  INTERVAL_HOURS = 2,
-  FORMATTED_TIME = 3
-};
+#include "ModeAndValue.h"
+#include <vector>
 
 struct Arguments {
-  TimeModes mode;
-  int arg1;
-  int arg2;
-  int arg3;
-  int arg4;
-  Arguments(TimeModes,int,int,int,int);
+  ModeAndValue arg1;
+  ModeAndValue arg2;
+  ModeAndValue arg3;
+  ModeAndValue arg4;
+  Arguments(const ModeAndValue&, const ModeAndValue&, const ModeAndValue&, const ModeAndValue&);
+  void convertToVector(std::vector<ModeAndValue>&);
 };

@@ -13,7 +13,7 @@ class Parser {
     int getTasksCount();
     void getTask(int, Arguments&);
   private:
-    std::vector<std::vector<int> > _task;
+    std::vector<std::vector<ModeAndValue> > _task;
     std::vector<int> _isParameterChecked;
     std::vector<std::string> _parameters;
     std::vector<int> _commandsPositions;
@@ -24,9 +24,6 @@ class Parser {
     void _printHelp();
     void _addMistake(const std::string&);
     void _addCommand(const std::string&, int);
-    void _setInterval(int);
-    void _setIntervalInMinutes(int);
-    void _setIntervalInHours(int);
     void _setTimeInCrontabFile(int);
     void _runCommands();
     void _checkIfAllParametersAreChecked();

@@ -20,7 +20,10 @@ int Parser::init() {
     return 1;
   }
   if(!_task.size()) {
-    Arguments args(INTERVAL_HOURS,0,2,0,0); 
+    ModeAndValue arg1 = {0,0};
+    ModeAndValue arg2 = {1,0};
+    ModeAndValue arg3 = {2,2};
+    Arguments args(arg2,arg3,arg1,arg1); 
     _addTask(args);
   }
   return 0;
@@ -31,33 +34,20 @@ int Parser::getTasksCount() {
 }
 
 void Parser::getTask(int numb, Arguments& args) {
-  if(_task.size() < numb+1)
-    return;
-  switch(_task[numb][0]) {
-    case 1:
-      args.mode = INTERVAL_MINUTES;
-      break;
-    case 2:
-      args.mode = INTERVAL_HOURS;
-      break;
-    case 3:
-      args.mode = FORMATTED_TIME;
-      break;
-  }
-  args.arg1 = _task[numb][1];
-  args.arg2 = _task[numb][2];
-  args.arg3 = _task[numb][3];
-  args.arg4 = _task[numb][4];
+  args.arg1.value = _task[numb][0].value;
+  args.arg2.value = _task[numb][1].value;
+  args.arg3.value = _task[numb][2].value;
+  args.arg4.value = _task[numb][3].value;
+  args.arg1.mode = _task[numb][0].mode;
+  args.arg2.mode = _task[numb][1].mode;
+  args.arg3.mode = _task[numb][2].mode;
+  args.arg4.mode = _task[numb][3].mode;
 }
 
 void Parser::_addTask(Arguments args) {
-  const std::vector<int> k;
+  std::vector<ModeAndValue> k;
+  args.convertToVector(k);
   _task.push_back(k);
-  _task[_task.size() - 1].push_back(args.mode);
-  _task[_task.size() - 1].push_back(args.arg1);
-  _task[_task.size() - 1].push_back(args.arg2);
-  _task[_task.size() - 1].push_back(args.arg3);
-  _task[_task.size() - 1].push_back(args.arg4);
 }
 
 void Parser::_addMistake(const std::string& mist) {
@@ -76,8 +66,7 @@ void Parser::_printMistakes() {
 
 void Parser::_printHelp() {
   std::cout << "FEATURED OPTIONS\n\t--help\n\t\tprint help\n\t";
-  std::cout << "--interval\n\t\tset time interval in which system data and time will be updated: in minutes(last symbol in parameter 'm') ";
-  std::cout << "or in hours(last symbol in parameter 'h')\n\t--time\n\t\t";
+  std::cout << "--time\n\t\t";
   std::cout << "set data and time on which system data and time will be updated. Format:";
   std::cout << "Month/Day hour:minute, you can use 'every' or 'every{'interval'}' instead of each instance\n";
 }
@@ -92,10 +81,6 @@ void Parser::_runCommands() {
       _printHelp();
       flag = true;
     }
-    if(c == "--interval") {
-      flag = true;
-      _setInterval(p);
-    }
     if(c == "--time") {
       flag = true;
       _setTimeInCrontabFile(p);
@@ -107,64 +92,9 @@ void Parser::_runCommands() {
   }
 }
 
-void Parser::_setInterval(int pos) {
-  if(pos+1 == _parameters.size()) {
-    _addMistake("--interval: this command needs an argument");
-    return;
-  }
-  _isParameterChecked[pos+1] = true;
-  std::string lastSymbol = _parameters[pos+1].substr(_parameters[pos+1].length()-1,1);
-  if(lastSymbol == "h")
-    _setIntervalInHours(pos);
-  else if(lastSymbol == "m")
-    _setIntervalInMinutes(pos);
-  else
-    _addMistake("--interval: last symbol of argument should be either 'm'(for minutes) or 'h'(for hours)");
-}
-
-void Parser::_setIntervalInHours(int pos) {
-  int hours = atoi(_parameters[pos+1].c_str());
-  std::stringstream ss;
-  ss << hours;
-  std::string newArgHours = ss.str();
-  bool flag = false;
-  if(newArgHours.length() != _parameters[pos+1].length()-1 || (hours == 0 && _parameters[pos+1]!="0h")) {
-    _addMistake("--interval: wrong argument. Argument of --interval(h) should be number of hours");
-    flag = true;
-  }
-  if(hours > 23 || hours < 0 || (hours == 0 && _parameters[pos+1]=="0h")) {
-    _addMistake("--interval: number of hours should be between 1 and 23");
-    flag = true;
-  }    
-  if(!flag) {
-    Arguments args(INTERVAL_HOURS,0,hours,0,0);
-    _addTask(args);
-  }
-}
-
-void Parser::_setIntervalInMinutes(int pos) {
-  int minutes = atoi(_parameters[pos+1].c_str());
-  std::stringstream ss;
-  ss << minutes;
-  std::string newArgMinutes = ss.str();
-  bool flag = false;
-  if(newArgMinutes.length() != _parameters[pos+1].length()-1 || (minutes == 0 && _parameters[pos+1]!="0m")) {
-    _addMistake("--interval: wrong argument. Argument of --interval(m) should be number of minutes");
-    flag = true;
-  }
-  if(minutes > 59 || minutes < 0 || (minutes == 0 && _parameters[pos+1]=="0m")) {
-    _addMistake("--interval: number of minutess should be between 1 and 59");
-    flag = true;
-  }
-  if(!flag) {
-    Arguments args(INTERVAL_MINUTES,minutes,0,0,0);
-    _addTask(args);
-  }
-}
-
 void Parser::_setTimeInCrontabFile(int pos) {
   if(pos+1 == _parameters.size()  || pos+2 == _parameters.size()) {
-    _addMistake("--time: this command needs two arguments");
+    _addMistake("--time: wrong format of date");
     return;
   }
   _isParameterChecked[pos+1] = true;
@@ -185,11 +115,11 @@ void Parser::_setTimeInCrontabFile(int pos) {
       pos1 = i;
     }
   if(sepCount > 1) {
-    _addMistake("--time: first argument: there should be only one separator '/' in this argument. format : --time Month/Day hour:minute");
+    _addMistake("--time:there should be only one separator '/', that devides month and day. Format : --time Month/Day hour:minute");
     flag = true;
   }
   if(sepCount == 0) {
-    _addMistake("--time: first argument: missing separator '/' in this argument. format : --time Month/Day hour:minute");
+    _addMistake("--time: missing separator '/'. Format : --time Month/Day hour:minute");
     flag = true;
   }
   sepCount = 0;
@@ -199,11 +129,11 @@ void Parser::_setTimeInCrontabFile(int pos) {
       pos2 = i;
     }
   if(sepCount > 1) {
-    _addMistake("--time: second argument: there should be only one separator ':' in this argument. format : --time MM/DD hh:mm");
+    _addMistake("--time: there should be only one separator ':', that devides hour and minute. Format : --time Month/Day hour:minute");
     flag = true;
   }
   if(sepCount == 0) {
-    _addMistake("--time: second argument: missing separator ':' in this argument. format : --time MM/DD hh:mm");
+    _addMistake("--time: missing separator ':'. Format : --time Month/Day hour:minute");
     flag = true;
   }
   if(flag)
@@ -232,82 +162,86 @@ void Parser::_setTimeInCrontabFile(int pos) {
     flagMinuteEvery = 1;
     minute = minute.substr(6, minute.length() - 7);
   }
-  int monthI = atoi(month.c_str());
+  ModeAndValue monthI = {1,0};
+  monthI.value = atoi(month.c_str());
   std::stringstream ss1;
-  ss1 << monthI;
+  ss1 << monthI.value;
   std::string newArgMonth = ss1.str();
   flag = false;
-  if((newArgMonth.length() != month.length() || (monthI == 0 && month != "0")) && month !="every") {
+  if((newArgMonth.length() != month.length() || (monthI.value == 0 && month != "0")) && month !="every") {
     _addMistake("--time: wrong argument in place of month or interval of months");
     flag = true;
   }
-  if(monthI > 12 || monthI < 0 || (monthI == 0 && month == "0")) {
+  if(monthI.value > 12 || monthI.value < 0 || (monthI.value == 0 && month == "0")) {
     _addMistake("--time: month or interval of months should be between 1 and 12");
     flag = true;
   }
   if(month == "every") 
-    monthI = -1;
+    monthI.mode = 0;
   if(flagMonthEvery)
-    monthI -= 100;
-  int dayI = atoi(day.c_str());
+    monthI.mode = 2;
+  ModeAndValue dayI = {1,0};
+  dayI.value = atoi(day.c_str());
   std::stringstream ss2;
-  ss2 << dayI;
+  ss2 << dayI.value;
   std::string newArgDay = ss2.str();
-  if((newArgDay.length() != day.length() || (dayI == 0 && day != "0")) && day !="every") {
+  if((newArgDay.length() != day.length() || (dayI.value == 0 && day != "0")) && day !="every") {
     _addMistake("--time: wrong argument in place of day or interval of days");
     flag = true;
   }
-  if(dayI > 31 || dayI < 0 || (dayI == 0 && day == "0")) {
+  if(dayI.value > 31 || dayI.value < 0 || (dayI.value == 0 && day == "0")) {
     _addMistake("--time: day or interval of days should be between 1 and 31");
     flag = true;
   }
   if(day == "every") 
-    dayI = -1;
+    dayI.mode = -1;
   if(flagDayEvery)
-    dayI -= 100;
-  int hourI = atoi(hour.c_str());
+    dayI.mode = 2;
+  ModeAndValue hourI = {1,0};
+  hourI.value = atoi(hour.c_str());
   std::stringstream ss3;
-  ss3 << hourI;
+  ss3 << hourI.value;
   std::string newArgHour = ss3.str();
-  if((newArgHour.length() != hour.length() || (hourI == 0 && hour != "0")) && hour !="every") {
+  if((newArgHour.length() != hour.length() || (hourI.value == 0 && hour != "0")) && hour !="every") {
     _addMistake("--time: wrong argument in place of hour or interval of hours");
     flag = true;
   }
-  if(hourI > 23 || hourI < 0) {
+  if(hourI.value > 23 || hourI.value < 0) {
     _addMistake("--time: hour or interval of hours should be between 0 and 23");
     flag = true;
   }
   if(hour == "every") 
-    hourI = -1;
-  if(flagHourEvery && !hourI) {
+    hourI.mode = -1;
+  if(flagHourEvery && hourI.value == 0 && hour == "0") {
     _addMistake("--time: interval of hours shouldn't be 0");
     flag = true;
   }
   if(flagHourEvery)
-    hourI -= 100;
-  int minuteI = atoi(minute.c_str());
+    hourI.mode = 2;
+  ModeAndValue minuteI = {1,0};
+  minuteI.value = atoi(minute.c_str());
   std::stringstream ss4;
-  ss4 << minuteI;
+  ss4 << minuteI.value;
   std::string newArgMinute = ss4.str();
-  if((newArgMinute.length() != minute.length() || (minuteI == 0 && minute != "0")) && minute !="every") {
+  if((newArgMinute.length() != minute.length() || (minuteI.value == 0 && minute != "0")) && minute !="every") {
     _addMistake("--time: wrong argument in place of minute or interval of minutes");
     flag = true;
   }
-  if(minuteI > 59 || minuteI < 0) {
+  if(minuteI.value > 59 || minuteI.value < 0) {
     _addMistake("--time: minute or interval of minutes should be between 0 and 59");
     flag = true;
   }
   if(minute == "every") 
-    minuteI = -1;
-  if(flagMinuteEvery && !minuteI) {
+    minuteI.mode = -1;
+  if(flagMinuteEvery && minuteI.value == 0 && minute == "0") {
     _addMistake("--time: interval of minutes shouldn't be 0");
     flag = true;
   }
   if(flagMinuteEvery)
-    minuteI -= 100;
+    minuteI.mode = 2;
   if(flag)
     return;
-  Arguments args(FORMATTED_TIME, minuteI, hourI, dayI, monthI);
+  Arguments args(minuteI, hourI, dayI, monthI);
   _addTask(args);
 }
 

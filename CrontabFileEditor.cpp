@@ -11,86 +11,52 @@ void CrontabFileEditor::run(Parser* parser) {
   fstrm.open("ctf");
   std::string result = "";
   std::string commandCT = "/usr/bin/ntpdate pool.ntp.org";
-  Arguments args(FORMATTED_TIME,0,0,0,0);
+  ModeAndValue mav = {1,0};
+  Arguments args(mav,mav,mav,mav);
   for(int i = 0; i < _tasksCount; i++) {
     parser->getTask(i,args);
-    switch(args.mode) {
-      case INTERVAL_MINUTES: {
-        std::stringstream ss;
-        ss << args.arg1;
-        std::string minutes = ss.str();
-        result += "*/";
-        result += minutes;
-        result += " * * * * ";
-        result += commandCT;
-        result += "\n";
-        break;
-      }
-      case INTERVAL_HOURS: {
-        std::stringstream ss;
-        ss << args.arg2;
-        std::string hours = ss.str();
-        result += "0 */";
-        result += hours;
-        result += " * * * ";
-        result += commandCT;
-        result += "\n";
-        break;
-      }
-      case FORMATTED_TIME: {
-        std::stringstream ss1;
-        if(args.arg1 < -1) {
-          ss1 << "*/";
-          args.arg1+=100;
-        }
-        ss1 << args.arg1;
-        std::string minute = ss1.str();
-        std::stringstream ss2;
-        if(args.arg2 < -1) {
-          ss2 << "*/";
-          args.arg2+=100;
-        }
-        ss2 << args.arg2;
-        std::string hour = ss2.str();
-        std::stringstream ss3;
-        if(args.arg3 < -1) {
-          ss3 << "*/";
-          args.arg3+=100;
-        }
-        ss3 << args.arg3;
-        std::string day = ss3.str();
-        std::stringstream ss4;
-        if(args.arg4 < -1) {
-          ss4 << "*/";
-          args.arg4+=100;
-        }
-        ss4 << args.arg4;
-        std::string month = ss4.str();
-        if(args.arg1 != -1)
-          result += minute;
-        else
-          result += "*";
-        result += " ";
-        if(args.arg2 != -1)
-          result += hour; 
-        else
-          result += "*";
-        result+=" ";
-        if(args.arg3 != -1)
-          result += day;
-        else
-          result += "*";
-        result+=" ";
-        if(args.arg4 != -1)
-          result += month;
-        else
-          result += "*";
-        result += " * ";
-        result += commandCT;
-        result += "\n";
-        break;
-      }
-    }
+    std::stringstream ss1;
+    if(args.arg1.mode == 2) 
+      ss1 << "*/";
+    ss1 << args.arg1.value;
+    std::string minute = ss1.str();
+    std::stringstream ss2;
+    if(args.arg2.mode == 2)
+      ss2 << "*/";
+    ss2 << args.arg2.value;
+    std::string hour = ss2.str();
+    std::stringstream ss3;
+    if(args.arg3.mode == 2) 
+      ss3 << "*/";
+    ss3 << args.arg3.value;
+    std::string day = ss3.str();
+    std::stringstream ss4;
+    if(args.arg4.mode == 2) 
+      ss4 << "*/";
+    ss4 << args.arg4.value;
+    std::string month = ss4.str();
+    if(args.arg1.mode)
+      result += minute;
+    else
+      result += "*";
+    result += " ";
+    if(args.arg2.mode)
+      result += hour; 
+    else
+      result += "*";
+    result+=" ";
+    if(args.arg3.mode)
+      result += day;
+    else
+      result += "*";
+    result+=" ";
+    if(args.arg4.mode)
+      result += month;
+    else
+      result += "*";
+    result += " * ";
+    result += commandCT;
+    result += "\n";
   }
   fstrm << result;
   fstrm.close();
