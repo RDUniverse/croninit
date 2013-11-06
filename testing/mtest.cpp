@@ -866,15 +866,14 @@ TEST(Parser, GetTask1GetStandardTask) {
   char** targv1 = (char**) targv1c; 
   Parser parser(1, targv1);
   parser.init();
-  ModeAndValue arg = {0,0};
-  Arguments tst(arg, arg, arg, arg);
+  Arguments tst;
   parser.getTask(0,tst);
-  EXPECT_EQ(0, tst.arg1.value);
-  EXPECT_EQ(1, tst.arg1.mode);
-  EXPECT_EQ(2, tst.arg2.value);
-  EXPECT_EQ(2, tst.arg2.mode);
-  EXPECT_EQ(0, tst.arg3.mode);
-  EXPECT_EQ(0, tst.arg4.mode);
+  EXPECT_EQ(0, tst.minute.value);
+  EXPECT_EQ(ONCE, tst.minute.mode);
+  EXPECT_EQ(2, tst.hour.value);
+  EXPECT_EQ(INTERVAL, tst.hour.mode);
+  EXPECT_EQ(EVERY, tst.day.mode);
+  EXPECT_EQ(EVERY, tst.month.mode);
 }
 
 TEST(Parser, GetTask2GetTask) {
@@ -882,17 +881,16 @@ TEST(Parser, GetTask2GetTask) {
   char** targv1 = (char**) targv1c; 
   Parser parser(4, targv1);
   parser.init();
-  ModeAndValue arg = {0,0};
-  Arguments tst(arg, arg, arg, arg);
+  Arguments tst;
   parser.getTask(0,tst);
-  EXPECT_EQ(12, tst.arg1.value);
-  EXPECT_EQ(1, tst.arg1.mode);
-  EXPECT_EQ(12, tst.arg2.value);
-  EXPECT_EQ(1, tst.arg2.mode);
-  EXPECT_EQ(12, tst.arg3.value);
-  EXPECT_EQ(1, tst.arg3.mode);
-  EXPECT_EQ(12, tst.arg4.value);
-  EXPECT_EQ(1, tst.arg4.mode);
+  EXPECT_EQ(12, tst.minute.value);
+  EXPECT_EQ(ONCE, tst.minute.mode);
+  EXPECT_EQ(12, tst.hour.value);
+  EXPECT_EQ(ONCE, tst.hour.mode);
+  EXPECT_EQ(12, tst.day.value);
+  EXPECT_EQ(ONCE, tst.day.mode);
+  EXPECT_EQ(12, tst.month.value);
+  EXPECT_EQ(ONCE, tst.month.mode);
 }
 
 TEST(Parser, GetTask3GetTaskMinuteIsEvery) {
@@ -900,16 +898,15 @@ TEST(Parser, GetTask3GetTaskMinuteIsEvery) {
   char** targv1 = (char**) targv1c; 
   Parser parser(4, targv1);
   parser.init();
-  ModeAndValue arg = {0,0};
-  Arguments tst(arg, arg, arg, arg);
+  Arguments tst;
   parser.getTask(0,tst);
-  EXPECT_EQ(0, tst.arg1.mode);
-  EXPECT_EQ(12, tst.arg2.value);
-  EXPECT_EQ(1, tst.arg2.mode);
-  EXPECT_EQ(12, tst.arg3.value);
-  EXPECT_EQ(1, tst.arg3.mode);
-  EXPECT_EQ(12, tst.arg4.value);
-  EXPECT_EQ(1, tst.arg4.mode);
+  EXPECT_EQ(EVERY, tst.minute.mode);
+  EXPECT_EQ(12, tst.hour.value);
+  EXPECT_EQ(ONCE, tst.hour.mode);
+  EXPECT_EQ(12, tst.day.value);
+  EXPECT_EQ(ONCE, tst.day.mode);
+  EXPECT_EQ(12, tst.month.value);
+  EXPECT_EQ(ONCE, tst.month.mode);
 }
 
 TEST(Parser, GetTask4GetTaskHourIsEvery) {
@@ -917,16 +914,15 @@ TEST(Parser, GetTask4GetTaskHourIsEvery) {
   char** targv1 = (char**) targv1c; 
   Parser parser(4, targv1);
   parser.init();
-  ModeAndValue arg = {0,0};
-  Arguments tst(arg, arg, arg, arg);
+  Arguments tst;
   parser.getTask(0,tst);
-  EXPECT_EQ(12, tst.arg1.value);
-  EXPECT_EQ(1, tst.arg1.mode);
-  EXPECT_EQ(0, tst.arg2.mode);
-  EXPECT_EQ(12, tst.arg3.value);
-  EXPECT_EQ(1, tst.arg3.mode);
-  EXPECT_EQ(12, tst.arg4.value);
-  EXPECT_EQ(1, tst.arg4.mode);
+  EXPECT_EQ(12, tst.minute.value);
+  EXPECT_EQ(ONCE, tst.minute.mode);
+  EXPECT_EQ(EVERY, tst.hour.mode);
+  EXPECT_EQ(12, tst.day.value);
+  EXPECT_EQ(ONCE, tst.day.mode);
+  EXPECT_EQ(12, tst.month.value);
+  EXPECT_EQ(ONCE, tst.month.mode);
 }
 
 TEST(Parser, GetTask5GetTaskDayIsEvery) {
@@ -934,16 +930,15 @@ TEST(Parser, GetTask5GetTaskDayIsEvery) {
   char** targv1 = (char**) targv1c; 
   Parser parser(4, targv1);
   parser.init();
-  ModeAndValue arg = {0,0};
-  Arguments tst(arg, arg, arg, arg);
+  Arguments tst;
   parser.getTask(0,tst);
-  EXPECT_EQ(12, tst.arg1.value);
-  EXPECT_EQ(1, tst.arg1.mode);
-  EXPECT_EQ(12, tst.arg2.value);
-  EXPECT_EQ(1, tst.arg2.mode);
-  EXPECT_EQ(0, tst.arg3.mode);
-  EXPECT_EQ(12, tst.arg4.value);
-  EXPECT_EQ(1, tst.arg4.mode);
+  EXPECT_EQ(12, tst.minute.value);
+  EXPECT_EQ(ONCE, tst.minute.mode);
+  EXPECT_EQ(12, tst.hour.value);
+  EXPECT_EQ(ONCE, tst.hour.mode);
+  EXPECT_EQ(EVERY, tst.day.mode);
+  EXPECT_EQ(12, tst.month.value);
+  EXPECT_EQ(ONCE, tst.month.mode);
 }
 
 TEST(Parser, GetTask6GetTaskMonthIsEvery) {
@@ -951,16 +946,15 @@ TEST(Parser, GetTask6GetTaskMonthIsEvery) {
   char** targv1 = (char**) targv1c; 
   Parser parser(4, targv1);
   parser.init();
-  ModeAndValue arg = {0,0};
-  Arguments tst(arg, arg, arg, arg);
+  Arguments tst;
   parser.getTask(0,tst);
-  EXPECT_EQ(12, tst.arg1.value);
-  EXPECT_EQ(1, tst.arg1.mode);
-  EXPECT_EQ(12, tst.arg2.value);
-  EXPECT_EQ(1, tst.arg2.mode);
-  EXPECT_EQ(12, tst.arg3.value);
-  EXPECT_EQ(1, tst.arg3.mode);
-  EXPECT_EQ(0, tst.arg4.mode);
+  EXPECT_EQ(12, tst.minute.value);
+  EXPECT_EQ(ONCE, tst.minute.mode);
+  EXPECT_EQ(12, tst.hour.value);
+  EXPECT_EQ(ONCE, tst.hour.mode);
+  EXPECT_EQ(12, tst.day.value);
+  EXPECT_EQ(ONCE, tst.day.mode);
+  EXPECT_EQ(EVERY, tst.month.mode);
 }
 
 TEST(Parser, GetTask7GetTaskInervalMinute) {
@@ -968,17 +962,16 @@ TEST(Parser, GetTask7GetTaskInervalMinute) {
   char** targv1 = (char**) targv1c; 
   Parser parser(4, targv1);
   parser.init();
-  ModeAndValue arg = {0,0};
-  Arguments tst(arg, arg, arg, arg);
+  Arguments tst;
   parser.getTask(0,tst);
-  EXPECT_EQ(12, tst.arg1.value);
-  EXPECT_EQ(2, tst.arg1.mode);
-  EXPECT_EQ(12, tst.arg2.value);
-  EXPECT_EQ(1, tst.arg2.mode);
-  EXPECT_EQ(12, tst.arg3.value);
-  EXPECT_EQ(1, tst.arg3.mode);
-  EXPECT_EQ(12, tst.arg4.value);
-  EXPECT_EQ(1, tst.arg4.mode);
+  EXPECT_EQ(12, tst.minute.value);
+  EXPECT_EQ(INTERVAL, tst.minute.mode);
+  EXPECT_EQ(12, tst.hour.value);
+  EXPECT_EQ(ONCE, tst.hour.mode);
+  EXPECT_EQ(12, tst.day.value);
+  EXPECT_EQ(ONCE, tst.day.mode);
+  EXPECT_EQ(12, tst.month.value);
+  EXPECT_EQ(ONCE, tst.month.mode);
 }
 
 TEST(Parser, GetTask8GetTaskIntervalHour) {
@@ -986,17 +979,16 @@ TEST(Parser, GetTask8GetTaskIntervalHour) {
   char** targv1 = (char**) targv1c; 
   Parser parser(4, targv1);
   parser.init();
-  ModeAndValue arg = {0,0};
-  Arguments tst(arg, arg, arg, arg);
+  Arguments tst;
   parser.getTask(0,tst);
-  EXPECT_EQ(12, tst.arg1.value);
-  EXPECT_EQ(1, tst.arg1.mode);
-  EXPECT_EQ(12, tst.arg2.value);
-  EXPECT_EQ(2, tst.arg2.mode);
-  EXPECT_EQ(12, tst.arg3.value);
-  EXPECT_EQ(1, tst.arg3.mode);
-  EXPECT_EQ(12, tst.arg4.value);
-  EXPECT_EQ(1, tst.arg4.mode);
+  EXPECT_EQ(12, tst.minute.value);
+  EXPECT_EQ(ONCE, tst.minute.mode);
+  EXPECT_EQ(12, tst.hour.value);
+  EXPECT_EQ(INTERVAL, tst.hour.mode);
+  EXPECT_EQ(12, tst.day.value);
+  EXPECT_EQ(ONCE, tst.day.mode);
+  EXPECT_EQ(12, tst.month.value);
+  EXPECT_EQ(ONCE, tst.month.mode);
 }
 
 TEST(Parser, GetTask9GetTaskIntervalDay) {
@@ -1004,17 +996,16 @@ TEST(Parser, GetTask9GetTaskIntervalDay) {
   char** targv1 = (char**) targv1c; 
   Parser parser(4, targv1);
   parser.init();
-  ModeAndValue arg = {0,0};
-  Arguments tst(arg, arg, arg, arg);
+  Arguments tst;
   parser.getTask(0,tst);
-  EXPECT_EQ(12, tst.arg1.value);
-  EXPECT_EQ(1, tst.arg1.mode);
-  EXPECT_EQ(12, tst.arg2.value);
-  EXPECT_EQ(1, tst.arg2.mode);
-  EXPECT_EQ(12, tst.arg3.value);
-  EXPECT_EQ(2, tst.arg3.mode);
-  EXPECT_EQ(12, tst.arg4.value);
-  EXPECT_EQ(1, tst.arg4.mode);
+  EXPECT_EQ(12, tst.minute.value);
+  EXPECT_EQ(ONCE, tst.minute.mode);
+  EXPECT_EQ(12, tst.hour.value);
+  EXPECT_EQ(ONCE, tst.hour.mode);
+  EXPECT_EQ(12, tst.day.value);
+  EXPECT_EQ(INTERVAL, tst.day.mode);
+  EXPECT_EQ(12, tst.month.value);
+  EXPECT_EQ(ONCE, tst.month.mode);
 }
 
 TEST(Parser, GetTask2GetTaskIntervalMonth) {
@@ -1022,17 +1013,16 @@ TEST(Parser, GetTask2GetTaskIntervalMonth) {
   char** targv1 = (char**) targv1c; 
   Parser parser(4, targv1);
   parser.init();
-  ModeAndValue arg = {0,0};
-  Arguments tst(arg, arg, arg, arg);
+  Arguments tst;
   parser.getTask(0,tst);
-  EXPECT_EQ(12, tst.arg1.value);
-  EXPECT_EQ(1, tst.arg1.mode);
-  EXPECT_EQ(12, tst.arg2.value);
-  EXPECT_EQ(1, tst.arg2.mode);
-  EXPECT_EQ(12, tst.arg3.value);
-  EXPECT_EQ(1, tst.arg3.mode);
-  EXPECT_EQ(12, tst.arg4.value);
-  EXPECT_EQ(2, tst.arg4.mode);
+  EXPECT_EQ(12, tst.minute.value);
+  EXPECT_EQ(ONCE, tst.minute.mode);
+  EXPECT_EQ(12, tst.hour.value);
+  EXPECT_EQ(ONCE, tst.hour.mode);
+  EXPECT_EQ(12, tst.day.value);
+  EXPECT_EQ(ONCE, tst.day.mode);
+  EXPECT_EQ(12, tst.month.value);
+  EXPECT_EQ(INTERVAL, tst.month.mode);
 }
 
 TEST(Parser, GetTask11GetSecondTask) {
@@ -1040,17 +1030,16 @@ TEST(Parser, GetTask11GetSecondTask) {
   char** targv1 = (char**) targv1c; 
   Parser parser(7, targv1);
   parser.init();
-  ModeAndValue arg = {0,0};
-  Arguments tst(arg, arg, arg, arg);
+  Arguments tst;
   parser.getTask(1,tst);
-  EXPECT_EQ(6, tst.arg1.value);
-  EXPECT_EQ(1, tst.arg1.mode);
-  EXPECT_EQ(6, tst.arg2.value);
-  EXPECT_EQ(1, tst.arg2.mode);
-  EXPECT_EQ(6, tst.arg3.value);
-  EXPECT_EQ(1, tst.arg3.mode);
-  EXPECT_EQ(6, tst.arg4.value);
-  EXPECT_EQ(1, tst.arg4.mode);
+  EXPECT_EQ(6, tst.minute.value);
+  EXPECT_EQ(ONCE, tst.minute.mode);
+  EXPECT_EQ(6, tst.hour.value);
+  EXPECT_EQ(ONCE, tst.hour.mode);
+  EXPECT_EQ(6, tst.day.value);
+  EXPECT_EQ(ONCE, tst.day.mode);
+  EXPECT_EQ(6, tst.month.value);
+  EXPECT_EQ(ONCE, tst.month.mode);
 }
 
 TEST(Parser, GetTask12GetThirdTask) {
@@ -1058,17 +1047,16 @@ TEST(Parser, GetTask12GetThirdTask) {
   char** targv1 = (char**) targv1c; 
   Parser parser(10, targv1);
   parser.init();
-  ModeAndValue arg = {0,0};
-  Arguments tst(arg, arg, arg, arg);
+  Arguments tst;
   parser.getTask(2,tst);
-  EXPECT_EQ(3, tst.arg1.value);
-  EXPECT_EQ(1, tst.arg1.mode);
-  EXPECT_EQ(3, tst.arg2.value);
-  EXPECT_EQ(1, tst.arg2.mode);
-  EXPECT_EQ(3, tst.arg3.value);
-  EXPECT_EQ(1, tst.arg3.mode);
-  EXPECT_EQ(3, tst.arg4.value);
-  EXPECT_EQ(1, tst.arg4.mode);
+  EXPECT_EQ(3, tst.minute.value);
+  EXPECT_EQ(ONCE, tst.minute.mode);
+  EXPECT_EQ(3, tst.hour.value);
+  EXPECT_EQ(ONCE, tst.hour.mode);
+  EXPECT_EQ(3, tst.day.value);
+  EXPECT_EQ(ONCE, tst.day.mode);
+  EXPECT_EQ(3, tst.month.value);
+  EXPECT_EQ(ONCE, tst.month.mode);
 }
 
 int main(int argc, char* argv[]) {
