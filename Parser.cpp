@@ -21,10 +21,11 @@ int Parser::init() {
     return 1;
   }
   if(!_task.size()) {
-    ModeAndValue arg1 = {0,0};
-    ModeAndValue arg2 = {1,0};
-    ModeAndValue arg3 = {2,2};
-    Arguments args(arg2,arg3,arg1,arg1); 
+    ModeAndValue minute(ONCE,0);
+    ModeAndValue hour(INTERVAL,2);
+    ModeAndValue day(EVERY,0);
+    ModeAndValue month(EVERY,0);
+    Arguments args(minute,hour,day,month); 
     _addTask(args);
   }
   return 0;
@@ -35,20 +36,11 @@ int Parser::getTasksCount() {
 }
 
 void Parser::getTask(int numb, Arguments& args) {
-  args.arg1.value = _task[numb][0].value;
-  args.arg2.value = _task[numb][1].value;
-  args.arg3.value = _task[numb][2].value;
-  args.arg4.value = _task[numb][3].value;
-  args.arg1.mode = _task[numb][0].mode;
-  args.arg2.mode = _task[numb][1].mode;
-  args.arg3.mode = _task[numb][2].mode;
-  args.arg4.mode = _task[numb][3].mode;
+  args = _task[numb];
 }
 
 void Parser::_addTask(Arguments args) {
-  std::vector<ModeAndValue> k;
-  args.convertToVector(k);
-  _task.push_back(k);
+  _task.push_back(args);
 }
 
 void Parser::_addMistake(const std::string& mist) {
@@ -176,7 +168,7 @@ void Parser::_setTimeInCrontabFile(int pos) {
     flagMinuteEvery = 1;
     minute = minute.substr(6, minute.length() - 7);
   }
-  ModeAndValue monthI = {1,0};
+  ModeAndValue monthI;
   monthI.value = atoi(month.c_str());
   std::stringstream ss1;
   ss1 << monthI.value;
@@ -191,10 +183,10 @@ void Parser::_setTimeInCrontabFile(int pos) {
     flag = true;
   }
   if(month == "every") 
-    monthI.mode = 0;
+    monthI.mode = EVERY;
   if(flagMonthEvery)
-    monthI.mode = 2;
-  ModeAndValue dayI = {1,0};
+    monthI.mode = INTERVAL;
+  ModeAndValue dayI;
   dayI.value = atoi(day.c_str());
   std::stringstream ss2;
   ss2 << dayI.value;
@@ -208,10 +200,10 @@ void Parser::_setTimeInCrontabFile(int pos) {
     flag = true;
   }
   if(day == "every") 
-    dayI.mode = 0;
+    dayI.mode = EVERY;
   if(flagDayEvery)
-    dayI.mode = 2;
-  ModeAndValue hourI = {1,0};
+    dayI.mode = INTERVAL;
+  ModeAndValue hourI;
   hourI.value = atoi(hour.c_str());
   std::stringstream ss3;
   ss3 << hourI.value;
@@ -225,14 +217,14 @@ void Parser::_setTimeInCrontabFile(int pos) {
     flag = true;
   }
   if(hour == "every") 
-    hourI.mode = 0;
+    hourI.mode = EVERY;
   if(flagHourEvery && hourI.value == 0 && hour == "0") {
     _addMistake("--time: interval of hours shouldn't be 0");
     flag = true;
   }
   if(flagHourEvery)
-    hourI.mode = 2;
-  ModeAndValue minuteI = {1,0};
+    hourI.mode = INTERVAL;
+  ModeAndValue minuteI;
   minuteI.value = atoi(minute.c_str());
   std::stringstream ss4;
   ss4 << minuteI.value;
@@ -246,13 +238,13 @@ void Parser::_setTimeInCrontabFile(int pos) {
     flag = true;
   }
   if(minute == "every") 
-    minuteI.mode = 0;
+    minuteI.mode = EVERY;
   if(flagMinuteEvery && minuteI.value == 0 && minute == "0") {
     _addMistake("--time: interval of minutes shouldn't be 0");
     flag = true;
   }
   if(flagMinuteEvery)
-    minuteI.mode = 2;
+    minuteI.mode = INTERVAL;
   if(flag)
     return;
   Arguments args(minuteI, hourI, dayI, monthI);

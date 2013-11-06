@@ -12,46 +12,45 @@ void CrontabFileEditor::run(Parser* parser) {
   fstrm.open("ctf");
   std::string result = "";
   std::string commandCT = "/usr/bin/ntpdate ";
-  ModeAndValue mav = {1,0};
-  Arguments args(mav,mav,mav,mav);
+  Arguments args;
   for(int i = 0; i < _tasksCount; i++) {
     parser->getTask(i,args);
     std::stringstream ss1;
-    if(args.arg1.mode == 2) 
+    if(args.minute.mode == INTERVAL) 
       ss1 << "*/";
-    ss1 << args.arg1.value;
+    ss1 << args.minute.value;
     std::string minute = ss1.str();
     std::stringstream ss2;
-    if(args.arg2.mode == 2)
+    if(args.hour.mode == INTERVAL)
       ss2 << "*/";
-    ss2 << args.arg2.value;
+    ss2 << args.hour.value;
     std::string hour = ss2.str();
     std::stringstream ss3;
-    if(args.arg3.mode == 2) 
+    if(args.day.mode == INTERVAL) 
       ss3 << "*/";
-    ss3 << args.arg3.value;
+    ss3 << args.day.value;
     std::string day = ss3.str();
     std::stringstream ss4;
-    if(args.arg4.mode == 2) 
+    if(args.month.mode == INTERVAL) 
       ss4 << "*/";
-    ss4 << args.arg4.value;
+    ss4 << args.month.value;
     std::string month = ss4.str();
-    if(args.arg1.mode)
+    if(args.minute.mode != EVERY)
       result += minute;
     else
       result += "*";
     result += " ";
-    if(args.arg2.mode)
+    if(args.hour.mode != EVERY)
       result += hour; 
     else
       result += "*";
     result+=" ";
-    if(args.arg3.mode)
+    if(args.day.mode != EVERY)
       result += day;
     else
       result += "*";
     result+=" ";
-    if(args.arg4.mode)
+    if(args.month.mode != EVERY)
       result += month;
     else
       result += "*";

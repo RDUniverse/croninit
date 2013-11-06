@@ -14,7 +14,7 @@ class Parser {
     void getTask(int, Arguments&);
     void getServerList(std::string&);
   private:
-    std::vector<std::vector<ModeAndValue> > _task;
+    std::vector<Arguments> _task;
     std::vector<int> _isParameterChecked;
     std::vector<std::string> _parameters;
     std::vector<int> _commandsPositions;

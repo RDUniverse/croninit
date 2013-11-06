@@ -3,10 +3,14 @@
 #include <vector>
 
 struct Arguments {
-  ModeAndValue arg1;
-  ModeAndValue arg2;
-  ModeAndValue arg3;
-  ModeAndValue arg4;
-  Arguments(const ModeAndValue&, const ModeAndValue&, const ModeAndValue&, const ModeAndValue&);
-  void convertToVector(std::vector<ModeAndValue>&);
+  ModeAndValue minute;
+  ModeAndValue hour;
+  ModeAndValue day;
+  ModeAndValue month;
+  Arguments(const ModeAndValue& nMinute = ModeAndValue(), 
+            const ModeAndValue& nHour = ModeAndValue(),
+            const ModeAndValue& nDay = ModeAndValue(),
+            const ModeAndValue& nMonth = ModeAndValue()) : 
+    minute(nMinute), hour(nHour), day(nDay), month(nMonth) {};
+  Arguments& operator=(const Arguments&);
 };
