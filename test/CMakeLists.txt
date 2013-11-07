@@ -8,7 +8,7 @@ find_package (Threads)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-include_directories(${CMAKE_SOURCE_DIR}/..)
+include_directories(${CMAKE_SOURCE_DIR}/../source)
 
 link_directories(${CMAKE_SOURCE_DIR}/libs)
 
