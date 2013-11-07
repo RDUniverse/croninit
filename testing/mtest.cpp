@@ -40,7 +40,7 @@ TEST(Parser, Init6Help) {
   const char *targv1c[] = {"program","--help"};
   char** targv1 = (char**) targv1c; 
   Parser parser(2, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init7HelpWithGarbage) {
@@ -68,21 +68,21 @@ TEST(Parser, Init10TwoHelps) {
   const char *targv1c[] = {"program","--help","--help"};
   char** targv1 = (char**) targv1c; 
   Parser parser(3, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init11ThreeHelps) {
   const char *targv1c[] = {"program","--help","--help","--help"};
   char** targv1 = (char**) targv1c; 
   Parser parser(4, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init12TenHelps) {
   const char *targv1c[] = {"program","--help","--help","--help","--help","--help","--help","--help","--help","--help","--help"};
   char** targv1 = (char**) targv1c; 
   Parser parser(11, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init13TenHelpsWithALotOfGarbage) {
@@ -131,28 +131,28 @@ TEST(Parser, Init19ServerWithArgumentAndWithHelp) {
   const char *targv1c[] = {"program","--server","someserver","--help"};
   char** targv1 = (char**) targv1c; 
   Parser parser(4, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init20ServerWithArgumentAndWithTwoHelps) {
   const char *targv1c[] = {"program","--server","someserver","--help","--help"};
   char** targv1 = (char**) targv1c; 
   Parser parser(5, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init21ServerWithArgumentAndWithFiveHelps) {
   const char *targv1c[] = {"program","--server","someserver","--help","--help","--help","--help","--help"};
   char** targv1 = (char**) targv1c; 
   Parser parser(8, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init22ServerWithArgumentAndWithFiveHelpsScatteredAllAround) {
   const char *targv1c[] = {"program","--help","--help","--server","someserver","--help","--help","--help"};
   char** targv1 = (char**) targv1c; 
   Parser parser(8, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init23TwoServersOneWithArgumentAndOneWithout) {
@@ -180,14 +180,14 @@ TEST(Parser, Init26FourServersWithArgumentsAndHelp) {
   const char *targv1c[] = {"program","--help","--server","someserver1","--server","someserver2","--server","someserver3","--server","someserver4"};
   char** targv1 = (char**) targv1c; 
   Parser parser(10, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init27TwoServersWithArgumentsOneArgumentIsActuallyHelpButItsOK) {
   const char *targv1c[] = {"program","--server","someserver","--server","--help"};
   char** targv1 = (char**) targv1c; 
   Parser parser(5, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init28TwoServersWithArgumentsOneArgumentIsActuallyHelpButItsOKAndALotOfGarbage) {
@@ -201,7 +201,7 @@ TEST(Parser, Init29TwoServersWithArgumentsAndHelpBetweenThem) {
   const char *targv1c[] = {"program","--server","someserver1","--help","--server","someserver2"};
   char** targv1 = (char**) targv1c; 
   Parser parser(6, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init30TimeNoArguments) {
@@ -250,35 +250,35 @@ TEST(Parser, Init36TimeWithTwoCorrectArgumentsAndHelp) {
   const char *targv1c[] = {"program","--time","12/12","12:12","--help"};
   char** targv1 = (char**) targv1c; 
   Parser parser(5, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init37TimeWithTwoCorrectArgumentsAndHelpBeforeTime) {
   const char *targv1c[] = {"program","--help","--time","12/12","12:12"};
   char** targv1 = (char**) targv1c; 
   Parser parser(5, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init38TimeWithTwoCorrectArgumentsAndTwoHelps) {
   const char *targv1c[] = {"program","--time","12/12","12:12","--help","--help"};
   char** targv1 = (char**) targv1c; 
   Parser parser(6, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init39TimeWithTwoCorrectArgumentsAndFourScatteredHelps) {
   const char *targv1c[] = {"program","--help","--help","--time","12/12","12:12","--help","--help"};
   char** targv1 = (char**) targv1c; 
   Parser parser(8, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init40TimeWithTwoCorrectArgumentsAndHelpAndServer) {
   const char *targv1c[] = {"program","--time","12/12","12:12","--help","--server","someserver"};
   char** targv1 = (char**) targv1c; 
   Parser parser(7, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init41TimeWithTwoCorrectArgumentsAndHelpAndServerWithoutArgument) {
@@ -292,14 +292,14 @@ TEST(Parser, Init42TimeWithTwoCorrectArgumentsAndHelpAndTwoServers) {
   const char *targv1c[] = {"program","--time","12/12","12:12","--help","--server","someserver1","--server","someserver2"};
   char** targv1 = (char**) targv1c;                                                                        
   Parser parser(9, targv1);                                                                                 
-  EXPECT_EQ(0, parser.init());                                                                             
+  EXPECT_EQ(1, parser.init());                                                                             
 }                                                                                                          
                                                                                                            
 TEST(Parser, Init43TimeWithTwoCorrectArgumentsAndHelpAndThreeServersScattered) {                           
   const char *targv1c[] = {"program","--server","someserver1","--time","12/12","12:12","--help","--server","someserver2","--server","someserver3"};
   char** targv1 = (char**) targv1c; 
   Parser parser(11, targv1);
-  EXPECT_EQ(0, parser.init());
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, Init44TwoTimesWithTwoCorrectArgumentsEach) {
@@ -845,10 +845,7 @@ TEST(Parser, GetServerList7TwoServersAndHelp) {
   const char *targv1c[] = {"program","--server","someserver1","--server","someserver2","--help"};
   char** targv1 = (char**) targv1c; 
   Parser parser(6, targv1);
-  parser.init();
-  std::string str="NULL";
-  parser.getServerList(str);
-  EXPECT_EQ("someserver1 someserver2", str);
+  EXPECT_EQ(1, parser.init());
 }
 
 TEST(Parser, GetServerList8TwoServersAndGarbage) {

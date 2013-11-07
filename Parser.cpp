@@ -13,7 +13,6 @@ int Parser::init() {
     if(_parameters[i].substr(0,2) == "--")
       _addCommand(_parameters[i], i);
   _runCommands();
-  _checkIfAllParametersAreChecked();
   if(_mistakes.size()) {
     _printMistakes();
     std::cout << "\n"; 
@@ -74,15 +73,21 @@ void Parser::_printHelp() {
 }
 
 void Parser::_runCommands() {
+  bool flagH = false;
+  for(int i = 0; i < _commands.size(); i++) {
+    std::string c = _commands[i];
+    if(c == "--help")
+      flagH = true;
+  }
+  if(flagH) {
+    _addMistake("");
+    return;
+  }
   for(int i = 0; i < _commands.size(); i++) {
     std::string c = _commands[i];
     int p = _commandsPositions[i];
     _isParameterChecked[p] = true;
     bool flag = false;
-    if(c == "--help") {
-      _printHelp();
-      flag = true;
-    }
     if(c == "--time") {
       flag = true;
       _setTimeInCrontabFile(p);
@@ -96,6 +101,7 @@ void Parser::_runCommands() {
       _addMistake(m+c);
     }
   }
+  _checkIfAllParametersAreChecked();
 }
 
 void Parser::_setTimeInCrontabFile(int pos) {
