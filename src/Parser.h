@@ -1,18 +1,19 @@
 #pragma once
 #include <string>
 #include <sstream>
-#include <iostream>
 #include <vector>
 #include <stdlib.h>
 #include "Arguments.h"
+#include "ModeInit.h"
 
 class Parser {
   public:
     Parser(int, char**);
-    int init();
+    ModeInit init();
     int getTasksCount();
     void getTask(int, Arguments&);
     void getServerList(std::string&);
+    std::vector<std::string> getMistakes(); 
   private:
     std::vector<Arguments> _task;
     std::vector<int> _isParameterChecked;
@@ -24,8 +25,6 @@ class Parser {
     int _serverIsChangedFlag;
     void _addTask(Arguments);
     void _addServer(int);
-    void _printMistakes();
-    void _printHelp();
     void _addMistake(const std::string&);
     void _addCommand(const std::string&, int);
     void _setTimeInCrontabFile(int);

@@ -1,6 +1,8 @@
 #include "Parser.h"
 
 Parser::Parser(int argc, char* argv[]) {
+  if(argc < 0)
+    _addMistake("Negative number of parameters was sent to constructor");
   _serverIsChangedFlag = 0;
   for(int i = 0; i < argc-1; i++)
     _isParameterChecked.push_back(false);
@@ -8,26 +10,31 @@ Parser::Parser(int argc, char* argv[]) {
     _parameters.push_back(argv[i]); 
 }
 
-int Parser::init() {
+ModeInit Parser::init() {
   for(int i = 0; i < _parameters.size(); i++)
     if(_parameters[i].substr(0,2) == "--")
       _addCommand(_parameters[i], i);
+  bool flagH = false;
+  for(int i = 0; i < _commands.size(); i++) {
+    std::string c = _commands[i];
+    if(c == "--help")
+      flagH = true;
+  }
+  if(flagH)
+    return HELP;
   _runCommands();
   if(_mistakes.size()) {
-    _printMistakes();
-    std::cout << "\n"; 
-    _printHelp();
-    return 1;
+    return ERROR;
   }
   if(!_task.size()) {
     ModeAndValue minute(ONCE,0);
-    ModeAndValue hour(INTERVAL,2);
+    ModeAndValue hour(ONCE,0);
     ModeAndValue day(EVERY,0);
     ModeAndValue month(EVERY,0);
     Arguments args(minute,hour,day,month); 
     _addTask(args);
   }
-  return 0;
+  return SUCCESS;
 }
 
 int Parser::getTasksCount() {
@@ -51,38 +58,8 @@ void Parser::_addCommand(const std::string& comm, int pos) {
   _commandsPositions.push_back(pos);
 }
 
-void Parser::_printMistakes() {
-  for(int i = 0; i < _mistakes.size(); i++)
-    std::cout << _mistakes[i] << "\n";
-}
-
-void Parser::_printHelp() {
-  std::cout << "FEATURED OPTIONS\n\t--help\n\t\tprint help\n\t";
-  std::cout << "--server\n\t\tset an ntp server for time updating\n\t";
-  std::cout << "--time\n\t\t";
-  std::cout << "set data and time for the updating data and time on the machine\n\t\tFormat:\n\t\t\t";
-  std::cout << "Month/Day hour:minute, where:\n\t\t\t\t";
-  std::cout << "Month: between 1 and 12 or 'every' for every month or 'every{interval}',\n\t\t\t\t\t";
-  std::cout << "where interval is between 1 and 12\n\t\t\t\t";
-  std::cout << "Day: between 1 and 31 or 'every' for every day or 'every{interval}',\n\t\t\t\t\t";
-  std::cout << "where interval is between 1 and 31\n\t\t\t\t";
-  std::cout << "hour: between 0 and 23 or 'every' for every hour or 'every{interval}',\n\t\t\t\t\t";
-  std::cout << "where interval is between 1 and 23\n\t\t\t\t";
-  std::cout << "minute: between 0 and 59 or 'every' for every minute or 'every{interval}',\n\t\t\t\t\t";
-  std::cout << "where interval is between 1 and 59\n\t\t\t\t\n";
-}
-
 void Parser::_runCommands() {
-  bool flagH = false;
-  for(int i = 0; i < _commands.size(); i++) {
-    std::string c = _commands[i];
-    if(c == "--help")
-      flagH = true;
-  }
-  if(flagH) {
-    _addMistake("");
-    return;
-  }
+  int flagServer = 0;
   for(int i = 0; i < _commands.size(); i++) {
     std::string c = _commands[i];
     int p = _commandsPositions[i];
@@ -94,7 +71,15 @@ void Parser::_runCommands() {
     }
     if(c == "--server") {
       flag = true;
-      _addServer(p);
+      if(!flagServer) {
+        flagServer = 1;
+        _addServer(p);
+      } else {
+        if(flagServer == 1) {
+          _addMistake("There should be only one command with named --server");
+	  flagServer = 2;
+        }
+      }
     }
     if(!flag) {
       std::string m = "Unexpected command: ";
@@ -271,15 +256,40 @@ void Parser::_addServer(int pos) {
     _addMistake("--server: this command needs a parameter");
     return;
   }
+  std::string sl = _parameters[pos+1];
   _isParameterChecked[pos+1] = true;
-  if(_serverIsChangedFlag) 
+  _serverIsChangedFlag = 1;
+  if(sl.substr(0,1) != "{" || sl.substr(sl.length()-1,1) != "}") {
+    _addMistake("--server: missing curly bracers. Format: --server{server1$server2$...$serverN}");
+    return;
+  }
+  if(sl.length() == 2) {
+    _addMistake("--server: no servers were given. Format: --server{server1$server2$...$serverN}");
+    return;
+  }
+  int prevComma = 0;
+  int flag = 0;
+  for(int i = 1; i < sl.length() - 1; i++) {
+    if(sl.substr(i,1) == "%") { 
+      if(!flag) {
+        _serverList << sl.substr(prevComma + 1, i - prevComma - 1);
+        flag = 1;
+      } else { 
+        _serverList << " " << sl.substr(prevComma + 1, i - prevComma - 1);
+      }
+      prevComma = i;
+    }
+  }
+  if(flag)
     _serverList << " ";
-  else
-    _serverIsChangedFlag = 1;
-  _serverList << _parameters[pos+1];
+  _serverList << sl.substr(prevComma + 1, sl.length() - 2 - prevComma);  
 }
 
 void Parser::getServerList(std::string& sl) {
   if(_serverIsChangedFlag)
     sl = _serverList.str();
+}
+
+std::vector<std::string> Parser::getMistakes() {
+  return _mistakes;
 }

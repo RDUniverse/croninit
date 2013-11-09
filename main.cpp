@@ -3,6 +3,7 @@
 #include "Identifier.h"
 #include "Parser.h"
 #include "CrontabFileEditor.h"
+#include "OutputHandler.h"
 
 int main(int argc, char* argv[]) {
   //start of user identification process
@@ -19,9 +20,17 @@ int main(int argc, char* argv[]) {
   }
   //end of user identification process
   //start of parsing
+  OutputHandler oh;
   Parser parser(argc, argv);
-  if(parser.init()) 
+  ModeInit mi = parser.init();
+  if(mi == ERROR) { 
+    oh.printMistakes(parser.getMistakes());
     return 0;
+  }
+  if(mi == HELP) {
+    oh.printHelp();
+    return 0;
+  }
   //end of parsing
   //start of creating crontab file
   CrontabFileEditor editor;
