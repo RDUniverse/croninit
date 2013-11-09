@@ -7,8 +7,8 @@ TEST(Parser, GetTask1GetStandardTask) {
   parser.getTask(0,tst);
   EXPECT_EQ(0, tst.minute.value);
   EXPECT_EQ(ONCE, tst.minute.mode);
-  EXPECT_EQ(2, tst.hour.value);
-  EXPECT_EQ(INTERVAL, tst.hour.mode);
+  EXPECT_EQ(0, tst.hour.value);
+  EXPECT_EQ(ONCE, tst.hour.mode);
   EXPECT_EQ(EVERY, tst.day.mode);
   EXPECT_EQ(EVERY, tst.month.mode);
 }
