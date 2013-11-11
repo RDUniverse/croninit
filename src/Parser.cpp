@@ -253,7 +253,7 @@ void Parser::_checkIfAllParametersAreChecked() {
 
 void Parser::_addServer(int pos) {
   if(pos+1 == _parameters.size()) {
-    _addMistake("--server: this command needs a parameter");
+    _addMistake("--server: this command needs an argument");
     return;
   }
   std::string sl = _parameters[pos+1];
