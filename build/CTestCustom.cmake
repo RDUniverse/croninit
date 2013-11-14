@@ -1,1 +1,0 @@
-set(CTEST_CUSTOM_POST_TEST "cp Testing/Temporary/LastTest.log Test.log")
