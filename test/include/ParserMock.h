@@ -5,7 +5,7 @@
 
 class ParserMock : public Parser {
   public:
-    ParserMock(int argc, char* argv[]) : Parser(argc, argv) {}
+    ParserMock() : Parser(0,0) {};
     int setTimeInCrontabFileMock(const std::string& par1, const std::string par2, Arguments& task) {
       _parameters.clear();
       _parameters.push_back("--time");
