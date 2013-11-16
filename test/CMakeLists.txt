@@ -78,3 +78,18 @@ target_link_libraries(testSetTimeInCrontabFile libgtest.a)
 target_link_libraries(testSetTimeInCrontabFile ${CMAKE_THREAD_LIBS_INIT})
 
 add_test(NAME testSetTimeInCrontabFile COMMAND testSetTimeInCrontabFile)
+
+file(WRITE mtest6.cpp "#include \"gtest/gtest.h\"\n")
+file(APPEND mtest6.cpp "#include \"ParserMock.h\"\n")
+file(APPEND mtest6.cpp "#include \"testAddServer.h\"\n\n")
+file(APPEND mtest6.cpp "int main(int argc, char* argv[]) {\n")
+file(APPEND mtest6.cpp "  ::testing::InitGoogleTest(&argc,argv);\n")
+file(APPEND mtest6.cpp "  return RUN_ALL_TESTS();\n}\n")
+
+add_executable(testAddServer mtest6.cpp ../src/Parser.cpp ../src/Arguments.cpp ../src/ModeAndValue.cpp)
+
+target_link_libraries(testAddServer libgtest.a)
+
+target_link_libraries(testAddServer ${CMAKE_THREAD_LIBS_INIT})
+
+add_test(NAME testAddServer COMMAND testAddServer)
