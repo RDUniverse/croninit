@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "Arguments.h"
 #include "ModeInit.h"
+#include <iostream>
 
 class Parser {
   public:
