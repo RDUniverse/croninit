@@ -9,7 +9,7 @@ TEST(Parser, GetServerList1NoServers) {
 }
 
 TEST(Parser, GetServerList2OneServer) {
-  const char *targv1c[] = {"program","--server","{someserver}"};
+  const char *targv1c[] = {"program","--server","someserver"};
   char** targv1 = (char**) targv1c; 
   Parser parser(3, targv1);
   parser.init();
@@ -18,8 +18,8 @@ TEST(Parser, GetServerList2OneServer) {
   EXPECT_EQ("someserver", str);
 }
 
-TEST(Parser, GetServerList3TwoServers) {
-  const char *targv1c[] = {"program","--server","{someserver1%someserver2}"};
+TEST(Parser, GetServerList3TwoServersQuotationMarks) {
+  const char *targv1c[] = {"program","--server","someserver1 someserver2"};
   char** targv1 = (char**) targv1c; 
   Parser parser(3, targv1);
   parser.init();
@@ -28,8 +28,8 @@ TEST(Parser, GetServerList3TwoServers) {
   EXPECT_EQ("someserver1 someserver2", str);
 }
 
-TEST(Parser, GetServerList4ThreeServers) {
-  const char *targv1c[] = {"program","--server","{someserver1%someserver2%someserver3}"};
+TEST(Parser, GetServerList4ThreeServersQuotationMarksAndSpaceRemoval) {
+  const char *targv1c[] = {"program","--server","         someserver1    someserver2    someserver3   "};
   char** targv1 = (char**) targv1c; 
   Parser parser(3, targv1);
   parser.init();
@@ -38,8 +38,8 @@ TEST(Parser, GetServerList4ThreeServers) {
   EXPECT_EQ("someserver1 someserver2 someserver3", str);
 }
 
-TEST(Parser, GetServerList5ThreeServers) {
-  const char *targv1c[] = {"program","--server","{someserver1%someserver2%someserver3%someserver4}"};
+TEST(Parser, GetServerList5ThreeServersQuatationMarksAndSpaceRemoval) {
+  const char *targv1c[] = {"program","--server","         someserver1   someserver2      someserver3   someserver4  "};
   char** targv1 = (char**) targv1c; 
   Parser parser(3, targv1);
   parser.init();
@@ -48,8 +48,8 @@ TEST(Parser, GetServerList5ThreeServers) {
   EXPECT_EQ("someserver1 someserver2 someserver3 someserver4", str);
 } 
 
-TEST(Parser, GetServerList6TwoServersAnd) {
-  const char *targv1c[] = {"program","--server","{someserver1%someserver2}","--time","2/2","2:2"};
+TEST(Parser, GetServerList6TwoServersAndTime) {
+  const char *targv1c[] = {"program","--server","someserver1 someserver2","--time","2/2","2:2"};
   char** targv1 = (char**) targv1c; 
   Parser parser(6, targv1);
   parser.init();
@@ -66,7 +66,7 @@ TEST(Parser, GetServerList7TwoServersAndHelp) {
 }
 
 TEST(Parser, GetServerList8TwoServersAndGarbage) {
-  const char *targv1c[] = {"program","--server","{someserver1%someserver2}","sdfmdkf","dsfhajf","fkdjfhjkfhkf"};
+  const char *targv1c[] = {"program","--server","someserver1 someserver2","sdfmdkf","dsfhajf","fkdjfhjkfhkf"};
   char** targv1 = (char**) targv1c; 
   Parser parser(6, targv1);
   parser.init();
