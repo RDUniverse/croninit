@@ -93,3 +93,7 @@ target_link_libraries(testAddServer libgtest.a)
 target_link_libraries(testAddServer ${CMAKE_THREAD_LIBS_INIT})
 
 add_test(NAME testAddServer COMMAND testAddServer)
+
+add_custom_target(tests)
+
+add_dependencies(tests testAddServer testSetTimeInCrontabFile testAddServer testInit testGetTasksCount testGetServerList)
