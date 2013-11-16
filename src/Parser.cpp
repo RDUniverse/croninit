@@ -259,30 +259,31 @@ void Parser::_addServer(int pos) {
   std::string sl = _parameters[pos+1];
   _isParameterChecked[pos+1] = true;
   _serverIsChangedFlag = 1;
-  if(sl.substr(0,1) != "{" || sl.substr(sl.length()-1,1) != "}") {
-    _addMistake("--server: missing curly bracers. Format: --server{server1$server2$...$serverN}");
-    return;
-  }
-  if(sl.length() == 2) {
-    _addMistake("--server: no servers were given. Format: --server{server1$server2$...$serverN}");
-    return;
-  }
-  int prevComma = 0;
+  int begin = -1;
+  int end = -1;
   int flag = 0;
-  for(int i = 1; i < sl.length() - 1; i++) {
-    if(sl.substr(i,1) == "%") { 
-      if(!flag) {
-        _serverList << sl.substr(prevComma + 1, i - prevComma - 1);
-        flag = 1;
-      } else { 
-        _serverList << " " << sl.substr(prevComma + 1, i - prevComma - 1);
-      }
-      prevComma = i;
+  int flagFirst = 0;
+  for(int i = 0; i < sl.length(); i++) {
+    if(sl.substr(i,1) != " " && flag == 0) {
+      begin = i;
+      flag = 1;
     }
-  }
-  if(flag)
-    _serverList << " ";
-  _serverList << sl.substr(prevComma + 1, sl.length() - 2 - prevComma);  
+    if(sl.substr(i,1) == " " && flag == 1) {
+      end = i - 1;
+      flag = 2;
+    }
+    if(i == sl.length() -1 && flag == 1) {
+      end = i;
+      flag = 2;
+    }
+    if(flag == 2) {
+      if(flagFirst)
+        _serverList << " ";
+      _serverList << sl.substr(begin, end - begin + 1);
+      flagFirst = 1;
+      flag = 0;
+    }
+  }    
 }
 
 void Parser::getServerList(std::string& sl) {
