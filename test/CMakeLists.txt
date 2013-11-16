@@ -64,14 +64,14 @@ target_link_libraries(testGetTasksCount ${CMAKE_THREAD_LIBS_INIT})
 
 add_test(NAME testGetTasksCount COMMAND testGetTasksCount)
 
-file(WRITE mtest.cpp "#include \"gtest/gtest.h\"\n")
-file(APPEND mtest.cpp "#include \"ParserMock.h\"\n")
-file(APPEND mtest.cpp "#include \"testSetTimeInCrontabFile.h\"\n\n")
-file(APPEND mtest.cpp "int main(int argc, char* argv[]) {\n")
-file(APPEND mtest.cpp "  ::testing::InitGoogleTest(&argc,argv);\n")
-file(APPEND mtest.cpp "  return RUN_ALL_TESTS();\n}\n")
+file(WRITE mtest5.cpp "#include \"gtest/gtest.h\"\n")
+file(APPEND mtest5.cpp "#include \"ParserMock.h\"\n")
+file(APPEND mtest5.cpp "#include \"testSetTimeInCrontabFile.h\"\n\n")
+file(APPEND mtest5.cpp "int main(int argc, char* argv[]) {\n")
+file(APPEND mtest5.cpp "  ::testing::InitGoogleTest(&argc,argv);\n")
+file(APPEND mtest5.cpp "  return RUN_ALL_TESTS();\n}\n")
 
-add_executable(testSetTimeInCrontabFile mtest.cpp ../src/Parser.cpp ../src/Arguments.cpp ../src/ModeAndValue.cpp)
+add_executable(testSetTimeInCrontabFile mtest5.cpp ../src/Parser.cpp ../src/Arguments.cpp ../src/ModeAndValue.cpp)
 
 target_link_libraries(testSetTimeInCrontabFile libgtest.a)
 
