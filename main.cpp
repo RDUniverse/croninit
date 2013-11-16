@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
   //start of creating crontab file
   CrontabFileEditor editor;
   editor.init(&parser);
-  editor.run(&parser);
+  editor.run();
   //end of creating crontab file
   return 0;
 }
