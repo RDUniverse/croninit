@@ -94,6 +94,21 @@ target_link_libraries(testAddServer ${CMAKE_THREAD_LIBS_INIT})
 
 add_test(NAME testAddServer COMMAND testAddServer)
 
+file(WRITE mtest7.cpp "#include \"gtest/gtest.h\"\n")
+file(APPEND mtest7.cpp "#include \"CrontabFileEditorMock.h\"\n")
+file(APPEND mtest7.cpp "#include \"testGetLinesForCrontabFile.h\"\n\n")
+file(APPEND mtest7.cpp "int main(int argc, char* argv[]) {\n")
+file(APPEND mtest7.cpp "  ::testing::InitGoogleTest(&argc,argv);\n")
+file(APPEND mtest7.cpp "  return RUN_ALL_TESTS();\n}\n")
+
+add_executable(testGetLinesForCrontabFile mtest7.cpp ../src/CrontabFileEditor.cpp ../src/Parser.cpp ../src/Arguments.cpp ../src/ModeAndValue.cpp)
+
+target_link_libraries(testGetLinesForCrontabFile libgtest.a)
+
+target_link_libraries(testGetLinesForCrontabFile ${CMAKE_THREAD_LIBS_INIT})
+
+add_test(NAME testGetLinesForCrontabFile COMMAND testGetLinesForCrontabFile)
+
 add_custom_target(tests)
 
-add_dependencies(tests testAddServer testSetTimeInCrontabFile testAddServer testInit testGetTasksCount testGetServerList)
+add_dependencies(tests testAddServer testSetTimeInCrontabFile testAddServer testInit testGetTasksCount testGetServerList testGetLinesForCrontabFile)
