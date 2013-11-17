@@ -10,7 +10,8 @@ class CrontabFileEditor{
     void run();
   private:
     int _tasksCount;
+    std::vector<Arguments> _tasks;
     std::string _linesForCrontabFile;
     std::string _serverList;
-    std::string _getLinesForCrontabFile(Parser*);
+    std::string _getLinesForCrontabFile();
 };

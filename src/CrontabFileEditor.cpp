@@ -3,7 +3,13 @@
 void CrontabFileEditor::init(Parser* parser) {
   _tasksCount = parser->getTasksCount();
   _serverList = "pool.ntp.org";
-  _linesForCrontabFile = _getLinesForCrontabFile(parser);
+  parser->getServerList(_serverList);
+  for(int i = 0; i < _tasksCount; i++) {
+    Arguments args;
+    _tasks.push_back(args);
+    parser->getTask(i, _tasks[i]);
+  }
+  _linesForCrontabFile = _getLinesForCrontabFile();
 }
 
 void CrontabFileEditor::run() {
@@ -16,12 +22,12 @@ void CrontabFileEditor::run() {
   system("crontab ctf");  
 }
 
-std::string CrontabFileEditor::_getLinesForCrontabFile(Parser* parser) {
+std::string CrontabFileEditor::_getLinesForCrontabFile() {
   std::string result = "";
   std::string commandCT = "/usr/bin/ntpdate ";
   Arguments args;
   for(int i = 0; i < _tasksCount; i++) {
-    parser->getTask(i,args);
+    args = _tasks[i];
     std::stringstream ss1;
     if(args.minute.mode == INTERVAL) 
       ss1 << "*/";
@@ -63,7 +69,6 @@ std::string CrontabFileEditor::_getLinesForCrontabFile(Parser* parser) {
       result += "*";
     result += " * ";
     result += commandCT;
-    parser->getServerList(_serverList);
     result += _serverList;
     result += "\n";
   }
