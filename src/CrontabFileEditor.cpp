@@ -20,7 +20,7 @@ void CrontabFileEditor::run() {
   fstrm << _linesForCrontabFile;
   fstrm.close();
   system("crontab ctf");
-  system("rm ctf")  
+  system("rm ctf");  
 }
 
 std::string CrontabFileEditor::_getLinesForCrontabFile() {
