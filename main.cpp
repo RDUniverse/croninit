@@ -8,9 +8,9 @@
 int main(int argc, char* argv[]) {
   //start of user identification process
   Identifier Id;
-  std::string checkingName = "root";
+  const int expectedID  = 0;
   if(!Id.run()) {
-    if(!Id.check(checkingName)) {
+    if(!Id.checkID(expectedID)) {
       std::cout << "In order for this program to be successefully executed, it must be run by a root user\n";
       return 0;
     }
