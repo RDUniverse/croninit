@@ -9,7 +9,6 @@ void CrontabFileEditor::init(Parser* parser) {
     _tasks.push_back(args);
     parser->getTask(i, _tasks[i]);
   }
-  _linesForCrontabFile = _getLinesForCrontabFile();
 }
 
 void CrontabFileEditor::run() {
@@ -17,7 +16,7 @@ void CrontabFileEditor::run() {
   system("rm ctf");
   std::ofstream fstrm;
   fstrm.open("ctf");
-  fstrm << _linesForCrontabFile;
+  fstrm << _getLinesForCrontabFile();;
   fstrm.close();
   system("crontab ctf");
   system("rm ctf");  

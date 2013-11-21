@@ -11,7 +11,6 @@ class CrontabFileEditor{
   private:
     int _tasksCount;
     std::vector<Arguments> _tasks;
-    std::string _linesForCrontabFile;
     std::string _serverList;
     std::string _getLinesForCrontabFile();
 };
