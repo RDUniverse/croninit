@@ -1,14 +1,10 @@
 TEST(CrontabFileEditor, getLinesForCrontabFile1GeneralTest) {
   std::vector<Arguments> vec;
-  Arguments args;
-  args.minute.value = 1;
-  args.minute.mode = ONCE;
-  args.hour.value = 1;
-  args.hour.mode = ONCE;
-  args.day.value = 1;
-  args.day.mode = ONCE;
-  args.month.value = 1;
-  args.month.mode = ONCE;
+  ModeAndValue minute(ONCE, 1);
+  ModeAndValue hour(ONCE, 1);
+  ModeAndValue day(ONCE, 1);
+  ModeAndValue month(ONCE, 1);
+  Arguments args(minute, hour, day, month);
   vec.push_back(args);
   std::string server = "server";
   std::string result;
@@ -20,15 +16,11 @@ TEST(CrontabFileEditor, getLinesForCrontabFile1GeneralTest) {
 
 TEST(CrontabFileEditor, getLinesForCrontabFile2MinuteIsEvery) {
   std::vector<Arguments> vec;
-  Arguments args;
-  args.minute.value = 0;
-  args.minute.mode = EVERY;
-  args.hour.value = 1;
-  args.hour.mode = ONCE;
-  args.day.value = 1;
-  args.day.mode = ONCE;
-  args.month.value = 1;
-  args.month.mode = ONCE;
+  ModeAndValue minute(EVERY, 0);
+  ModeAndValue hour(ONCE, 1);
+  ModeAndValue day(ONCE, 1);
+  ModeAndValue month(ONCE, 1);
+  Arguments args(minute, hour, day, month);
   vec.push_back(args);
   std::string server = "server";
   std::string result;
@@ -40,15 +32,11 @@ TEST(CrontabFileEditor, getLinesForCrontabFile2MinuteIsEvery) {
 
 TEST(CrontabFileEditor, getLinesForCrontabFile3HourIsEvery) {
   std::vector<Arguments> vec;
-  Arguments args;
-  args.minute.value = 1;
-  args.minute.mode = ONCE;
-  args.hour.value = 0;
-  args.hour.mode = EVERY;
-  args.day.value = 1;
-  args.day.mode = ONCE;
-  args.month.value = 1;
-  args.month.mode = ONCE;
+  ModeAndValue minute(ONCE, 1);
+  ModeAndValue hour(EVERY, 0);
+  ModeAndValue day(ONCE, 1);
+  ModeAndValue month(ONCE, 1);
+  Arguments args(minute, hour, day, month);
   vec.push_back(args);
   std::string server = "server";
   std::string result;
@@ -60,15 +48,11 @@ TEST(CrontabFileEditor, getLinesForCrontabFile3HourIsEvery) {
 
 TEST(CrontabFileEditor, getLinesForCrontabFile4DayIsEvery) {
   std::vector<Arguments> vec;
-  Arguments args;
-  args.minute.value = 1;
-  args.minute.mode = ONCE;
-  args.hour.value = 1;
-  args.hour.mode = ONCE;
-  args.day.value = 0;
-  args.day.mode = EVERY;
-  args.month.value = 1;
-  args.month.mode = ONCE;
+  ModeAndValue minute(ONCE, 1);
+  ModeAndValue hour(ONCE, 1);
+  ModeAndValue day(EVERY, 0);
+  ModeAndValue month(ONCE, 1);
+  Arguments args(minute, hour, day, month);
   vec.push_back(args);
   std::string server = "server";
   std::string result;
@@ -80,15 +64,11 @@ TEST(CrontabFileEditor, getLinesForCrontabFile4DayIsEvery) {
 
 TEST(CrontabFileEditor, getLinesForCrontabFile5MonthIsEvery) {
   std::vector<Arguments> vec;
-  Arguments args;
-  args.minute.value = 1;
-  args.minute.mode = ONCE;
-  args.hour.value = 1;
-  args.hour.mode = ONCE;
-  args.day.value = 1;
-  args.day.mode = ONCE;
-  args.month.value = 0;
-  args.month.mode = EVERY;
+  ModeAndValue minute(ONCE, 1);
+  ModeAndValue hour(ONCE, 1);
+  ModeAndValue day(ONCE, 1);
+  ModeAndValue month(EVERY, 0);
+  Arguments args(minute, hour, day, month);
   vec.push_back(args);
   std::string server = "server";
   std::string result;
@@ -100,15 +80,11 @@ TEST(CrontabFileEditor, getLinesForCrontabFile5MonthIsEvery) {
 
 TEST(CrontabFileEditor, getLinesForCrontabFile6MinuteIsInterval) {
   std::vector<Arguments> vec;
-  Arguments args;
-  args.minute.value = 3;
-  args.minute.mode = INTERVAL;
-  args.hour.value = 1;
-  args.hour.mode = ONCE;
-  args.day.value = 1;
-  args.day.mode = ONCE;
-  args.month.value = 1;
-  args.month.mode = ONCE;
+  ModeAndValue minute(INTERVAL, 3);
+  ModeAndValue hour(ONCE, 1);
+  ModeAndValue day(ONCE, 1);
+  ModeAndValue month(ONCE, 1);
+  Arguments args(minute, hour, day, month);
   vec.push_back(args);
   std::string server = "server";
   std::string result;
@@ -120,15 +96,11 @@ TEST(CrontabFileEditor, getLinesForCrontabFile6MinuteIsInterval) {
 
 TEST(CrontabFileEditor, getLinesForCrontabFile7HourIsInterval) {
   std::vector<Arguments> vec;
-  Arguments args;
-  args.minute.value = 1;
-  args.minute.mode = ONCE;
-  args.hour.value = 3;
-  args.hour.mode = INTERVAL;
-  args.day.value = 1;
-  args.day.mode = ONCE;
-  args.month.value = 1;
-  args.month.mode = ONCE;
+  ModeAndValue minute(ONCE, 1);
+  ModeAndValue hour(INTERVAL, 3);
+  ModeAndValue day(ONCE, 1);
+  ModeAndValue month(ONCE, 1);
+  Arguments args(minute, hour, day, month);
   vec.push_back(args);
   std::string server = "server";
   std::string result;
@@ -140,15 +112,11 @@ TEST(CrontabFileEditor, getLinesForCrontabFile7HourIsInterval) {
 
 TEST(CrontabFileEditor, getLinesForCrontabFile8DayIsInterval) {
   std::vector<Arguments> vec;
-  Arguments args;
-  args.minute.value = 1;
-  args.minute.mode = ONCE;
-  args.hour.value = 1;
-  args.hour.mode = ONCE;
-  args.day.value = 3;
-  args.day.mode = INTERVAL;
-  args.month.value = 1;
-  args.month.mode = ONCE;
+  ModeAndValue minute(ONCE, 1);
+  ModeAndValue hour(ONCE, 1);
+  ModeAndValue day(INTERVAL, 3);
+  ModeAndValue month(ONCE, 1);
+  Arguments args(minute, hour, day, month);
   vec.push_back(args);
   std::string server = "server";
   std::string result;
@@ -160,15 +128,11 @@ TEST(CrontabFileEditor, getLinesForCrontabFile8DayIsInterval) {
 
 TEST(CrontabFileEditor, getLinesForCrontabFile9MonthIsInterval) {
   std::vector<Arguments> vec;
-  Arguments args;
-  args.minute.value = 1;
-  args.minute.mode = ONCE;
-  args.hour.value = 1;
-  args.hour.mode = ONCE;
-  args.day.value = 1;
-  args.day.mode = ONCE;
-  args.month.value = 3;
-  args.month.mode = INTERVAL;
+  ModeAndValue minute(ONCE, 1);
+  ModeAndValue hour(ONCE, 1);
+  ModeAndValue day(ONCE, 1);
+  ModeAndValue month(INTERVAL, 3);
+  Arguments args(minute, hour, day, month);
   vec.push_back(args);
   std::string server = "server";
   std::string result;
@@ -180,17 +144,16 @@ TEST(CrontabFileEditor, getLinesForCrontabFile9MonthIsInterval) {
 
 TEST(CrontabFileEditor, getLinesForCrontabFile10TwoTasks) {
   std::vector<Arguments> vec;
-  Arguments args;
-  args.minute.value = 1;
-  args.minute.mode = ONCE;
-  args.hour.value = 1;
-  args.hour.mode = ONCE;
-  args.day.value = 1;
-  args.day.mode = ONCE;
-  args.month.value = 3;
-  args.month.mode = INTERVAL;
-  Arguments args2 = args;
-  args2.minute.value = 6;
+  ModeAndValue minute(ONCE, 1);
+  ModeAndValue hour(ONCE, 1);
+  ModeAndValue day(ONCE, 1);
+  ModeAndValue month(INTERVAL, 3);
+  Arguments args(minute, hour, day, month);
+  ModeAndValue minute2(ONCE, 6);
+  ModeAndValue hour2(ONCE, 1);
+  ModeAndValue day2(ONCE, 1);
+  ModeAndValue month2(INTERVAL, 3);
+  Arguments args2(minute2, hour2, day2, month2);
   vec.push_back(args);
   vec.push_back(args2);
   std::string server = "server";
@@ -203,20 +166,21 @@ TEST(CrontabFileEditor, getLinesForCrontabFile10TwoTasks) {
 
 TEST(CrontabFileEditor, getLinesForCrontabFile11ThreeTasks) {
   std::vector<Arguments> vec;
-  Arguments args;
-  args.minute.value = 1;
-  args.minute.mode = ONCE;
-  args.hour.value = 1;
-  args.hour.mode = ONCE;
-  args.day.value = 1;
-  args.day.mode = ONCE;
-  args.month.value = 3;
-  args.month.mode = INTERVAL;
-  Arguments args2 = args;
-  args2.minute.value = 6;
-  Arguments args3 = args2;
-  args3.hour.value = 10;
-  args3.hour.mode = INTERVAL;
+  ModeAndValue minute(ONCE, 1);
+  ModeAndValue hour(ONCE, 1);
+  ModeAndValue day(ONCE, 1);
+  ModeAndValue month(INTERVAL, 3);
+  Arguments args(minute, hour, day, month);
+  ModeAndValue minute2(ONCE, 6);
+  ModeAndValue hour2(ONCE, 1);
+  ModeAndValue day2(ONCE, 1);
+  ModeAndValue month2(INTERVAL, 3);
+  Arguments args2(minute2, hour2, day2, month2);
+  ModeAndValue minute3(ONCE, 6);
+  ModeAndValue hour3(INTERVAL, 10);
+  ModeAndValue day3(ONCE, 1);
+  ModeAndValue month3(INTERVAL, 3);
+  Arguments args3(minute3, hour3, day3, month3);
   vec.push_back(args);
   vec.push_back(args2);
   vec.push_back(args3);
