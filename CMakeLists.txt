@@ -37,3 +37,7 @@ add_custom_command(TARGET pack COMMAND echo "Package: croninit">>control
 add_custom_command(TARGET pack COMMAND dpkg-deb -b package .)
 
 add_custom_command(TARGET pack COMMAND sudo rm -R package)
+
+add_custom_target(inst)
+
+add_custom_command(TARGET inst COMMAND sudo dpkg -i croninit_1.0_i386.deb)
