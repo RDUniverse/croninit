@@ -52,4 +52,4 @@ add_test(NAME testGetLinesForCrontabFile COMMAND testGetLinesForCrontabFile)
 
 add_custom_target(tests)
 
-add_dependencies(tests testAddServer testSetTimeInCrontabFile testAddServer testInit testGetTasksCount testGetServerList testGetLinesForCrontabFile)
+add_dependencies(tests testAddServer testSetTimeInCrontabFile testGetTask testInit testGetTasksCount testGetServerList testGetLinesForCrontabFile)
