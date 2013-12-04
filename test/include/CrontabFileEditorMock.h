@@ -1,6 +1,5 @@
 #pragma once
 #include "Parser.h"
-#define private protected
 #include "CrontabFileEditor.h"
 
 class CrontabFileEditorMock : public CrontabFileEditor {
